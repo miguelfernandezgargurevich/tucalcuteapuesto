@@ -1,17 +1,108 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewBag.Title = "Contacto";
 }
 <h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+@*<h3>@ViewBag.Message</h3>*@
 
+@*<div class="col-md-3 text-center">
+    <ul class="list-unstyled mb-0">
+        <li>
+            <i class="fa fa-phone mt-4 fa-2x"></i>
+            <p>+ 051 966 918 363</p>
+        </li>
+
+        <li>
+            <i class="fa fa-envelope mt-4 fa-2x"></i>
+            <p>miguel.gargurevich@gmail.com</p>
+        </li>
+    </ul>
+</div>*@
+
+<p class="text-md-left w-responsive mx-auto mb-5">
+    Si tienes alguna sugerencia o comentario, escribenos!, apreciamos mucho tus comentarios y nos ayudan a mejorar.
+</p>
+<br />
+<div class="row">
+
+    <div class="col-md-9 mb-md-0 mb-5">
+        <div id="contact-form">
+
+            <!--Grid row-->
+            <div class="row">
+
+                <!--Grid column-->
+                <div class="col-md-12">
+                    <div class="md-form mb-0">
+                        <label for="name" class="">Nombre</label>
+                        <input type="text" id="txtNombre" name="name" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="md-form">
+                        <label for="message">Comentario</label>
+                        <textarea type="text" id="txtMensaje" name="txtMensaje" rows="4" class="form-control md-textarea"></textarea>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="text-md-left">
+            <a class="btn btn-light" onclick="enviarComentario();">Enviar</a>
+        </div>
+        <div class="status"></div>
+        <br />
+    </div>
+
+    <!--Grid column-->
+
+</div>
 <address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
+    
+    <abbr title="Phone">Telefono:</abbr>
+    +051 966 918 363<br />
+    Lima. PE<br />
 </address>
 
 <address>
-    <strong>Support:</strong>   <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+    <strong>Soporte:</strong>   <a href="miguel.gargurevich@gmail.com">miguel.gargurevich@gmail.com</a><br />
 </address>
+
+<script>
+    function enviarComentario() {
+        var mensaje = $("#txtMensaje").val();
+        var nombre = $("#txtNombre").val();
+
+        if (mensaje == "") {
+            alert("Ingrese un comentario");
+            return false;
+        }
+        var dataObject = JSON.stringify({
+            'Nombre': nombre,
+            'Mensaje': mensaje,
+        });
+
+        $.ajax({
+            url: '/Home/EnviarComentario/',
+            data: dataObject,
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (data) {
+                if (data == "true") {
+                    //$("#txtNombre").val() = "";
+                    //$("#txtMensaje").val() = "";
+                    alert("Su comentario se envió con éxito.");
+                }
+                else {
+                    alert("Result: " + data);
+                }
+            }
+        });
+
+    }
+
+
+</script>

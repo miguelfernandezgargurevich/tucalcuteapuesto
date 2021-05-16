@@ -333,7 +333,7 @@ namespace TuCalcuTeApuesto.Controllers
             base.Dispose(disposing);
         }
 
-#region Asistentes
+#region Aplicaciones auxiliares
         // Se usan para protección XSRF al agregar inicios de sesión externos
         private const string XsrfKey = "XsrfId";
 
