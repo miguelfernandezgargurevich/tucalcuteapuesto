@@ -37,9 +37,13 @@ namespace TuCalcuTeApuesto.Controllers
 
 
             string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
-            ExtractTextFromPdf(path);
+            var ret = ExtractTextFromPdf(path);
 
-            return View(listaFinal);
+            if (ret == true)
+                return View(listaFinal);
+            else
+                return View("Error");
+                        
         }
 
         [HttpPost]
@@ -1066,114 +1070,123 @@ namespace TuCalcuTeApuesto.Controllers
             return dt;
         }
 
-        public void ExtractTextFromPdf(string path)
+        public bool ExtractTextFromPdf(string path)
         {
+            bool ret = true;
             var newFileNameOriginal = String.Concat("TA-ED-Regular-Inicial", ".txt");
             var filepath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", newFileNameOriginal);
 
-            using (PdfReader reader = new PdfReader(path))
+            try
             {
-                StringBuilder text = new StringBuilder();
-
-                for (int i = 1; i <= reader.NumberOfPages; i++)
+                using (PdfReader reader = new PdfReader(path))
                 {
-                    text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
-                }
+                    StringBuilder text = new StringBuilder();
 
-                System.IO.File.WriteAllText(filepath, text.ToString());
-
-            }
-
-            //crear un nuevo file limpio
-            List<string> listaProgramas = new List<string>();
-            DataTable listaFinal = new DataTable();
-            listaFinal.Columns.Add("Codigo");
-            listaFinal.Columns.Add("Nombre");
-            string codigo = string.Empty;
-
-            var newFileName = String.Concat("TA-ED-Regular", ".txt");
-            var filepathNew = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", newFileName);
-
-            string[] empty = new string[0];
-            System.IO.File.WriteAllLines(filepathNew, empty);
-            StreamWriter fileClean = new StreamWriter(filepathNew, append: true);
-
-            string[] fileArray = System.IO.File.ReadAllLines(filepath);
-
-            string nomProgramaInicial = string.Empty;
-            string line = "";
-            var lstFinal = new List<string>();
-            for (int i = 0; i < fileArray.Length; i++)
-            {
-                DataRow row = listaFinal.NewRow();
-
-                line = fileArray[i].ToString();
-                if (validaTextoEnLinea(line) == true)
-                {
-                    if (line.Contains("NUEVAS APUESTAS"))
-                        break;
-
-                    if (line.Contains("PROGRAMA"))
+                    for (int i = 1; i <= reader.NumberOfPages; i++)
                     {
-                        if (nomProgramaInicial != line)
+                        text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                    }
+
+                    System.IO.File.WriteAllText(filepath, text.ToString());
+
+                    //crear un nuevo file limpio
+                    List<string> listaProgramas = new List<string>();
+                    DataTable listaFinal = new DataTable();
+                    listaFinal.Columns.Add("Codigo");
+                    listaFinal.Columns.Add("Nombre");
+                    string codigo = string.Empty;
+
+                    var newFileName = String.Concat("TA-ED-Regular", ".txt");
+                    var filepathNew = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", newFileName);
+
+                    string[] empty = new string[0];
+                    System.IO.File.WriteAllLines(filepathNew, empty);
+                    StreamWriter fileClean = new StreamWriter(filepathNew, append: true);
+
+                    string[] fileArray = System.IO.File.ReadAllLines(filepath);
+
+                    string nomProgramaInicial = string.Empty;
+                    string line = "";
+                    var lstFinal = new List<string>();
+                    for (int i = 0; i < fileArray.Length; i++)
+                    {
+                        DataRow row = listaFinal.NewRow();
+
+                        line = fileArray[i].ToString();
+                        if (validaTextoEnLinea(line) == true)
                         {
-                            fileClean.WriteLine(line);
+                            if (line.Contains("NUEVAS APUESTAS"))
+                                break;
 
-                            nomProgramaInicial = line;
-                            listaProgramas.Add(line);
+                            if (line.Contains("PROGRAMA"))
+                            {
+                                if (nomProgramaInicial != line)
+                                {
+                                    fileClean.WriteLine(line);
 
-                            var index = line.ToString().ToUpper().IndexOf("PROGRAMA");
-                            codigo = line.ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
+                                    nomProgramaInicial = line;
+                                    listaProgramas.Add(line);
+
+                                    var index = line.ToString().ToUpper().IndexOf("PROGRAMA");
+                                    codigo = line.ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
+
+                                }
+                            }
+                            else
+                            {
+                                if (line.Contains("V-VAREN"))
+                                    line = line.Replace("V-VAREN", "V VAREN");
+
+                                if (line.Contains("AL-FUJIRAH"))
+                                    line = line.Replace("AL-FUJIRAH", "AL FUJIRAH");
+
+                                if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
+                                    line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
+
+                                fileClean.WriteLine(line);
+
+                                row["Codigo"] = codigo;
+                                row["Nombre"] = line;
+                                listaFinal.Rows.Add(row);
+                            }
 
                         }
                     }
-                    else
+                    fileClean.Close();
+
+                    //crear files unicos
+                    for (int j = 0; j <= listaProgramas.Count - 1; j++)
                     {
-                        if (line.Contains("V-VAREN"))
-                            line = line.Replace("V-VAREN", "V VAREN");
 
-                        if (line.Contains("AL-FUJIRAH"))
-                            line = line.Replace("AL-FUJIRAH", "AL FUJIRAH");
+                        var index = listaProgramas[j].ToString().ToUpper().IndexOf("PROGRAMA");
+                        codigo = listaProgramas[j].ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
 
-                        if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
-                            line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
+                        DataRow[] result = listaFinal.Select("Codigo = " + codigo);
+                        string addResult = string.Empty;
+                        foreach (DataRow row in result)
+                        {
+                            addResult = addResult + row["Nombre"] + "\n";
+                        }
 
-                        fileClean.WriteLine(line);
+                        var fileUnicoName = String.Concat(listaProgramas[j], ".txt");
+                        var fileUnicoPath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileUnicoName);
 
-                        row["Codigo"] = codigo;
-                        row["Nombre"] = line;
-                        listaFinal.Rows.Add(row);
+                        using (FileStream fs = new FileStream(fileUnicoPath, FileMode.Create))
+                        {
+                            byte[] bytes = Encoding.UTF8.GetBytes(addResult);
+                            fs.Write(bytes, 0, bytes.Length);
+                            fs.Close();
+                        }
+
                     }
-
                 }
             }
-            fileClean.Close();
-
-            //crear files unicos
-            for (int j = 0; j <= listaProgramas.Count - 1; j++)
+            catch (Exception e)
             {
-
-                var index = listaProgramas[j].ToString().ToUpper().IndexOf("PROGRAMA");
-                codigo = listaProgramas[j].ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
-
-                DataRow[] result = listaFinal.Select("Codigo = " + codigo);
-                string addResult = string.Empty;
-                foreach (DataRow row in result)
-                {
-                    addResult = addResult + row["Nombre"] + "\n";
-                }
-
-                var fileUnicoName = String.Concat(listaProgramas[j], ".txt");
-                var fileUnicoPath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileUnicoName);
-
-                using (FileStream fs = new FileStream(fileUnicoPath, FileMode.Create))
-                {
-                    byte[] bytes = Encoding.UTF8.GetBytes(addResult);
-                    fs.Write(bytes, 0, bytes.Length);
-                    fs.Close();
-                }
-
+                ViewBag.ErrorMessage = e.Message.ToString();
+                ret = false;
             }
+            return ret;
 
         }
 
