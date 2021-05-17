@@ -32,12 +32,15 @@ namespace TuCalcuTeApuesto.Controllers
 
             if (System.IO.Directory.Exists(pathCarpeta))
             {
-                listaFinal = cargaDataModelo(pathCarpeta, f);
+                listaFinal = CargaDataModelo(pathCarpeta, f);
             }
 
 
             string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
             var ret = ExtractTextFromPdf(path);
+            //var listaProgramas = GetProgramasFromPdfStrategy();
+
+            CreaArchivosSSIS();
 
             if (ret == true)
                 return View(listaFinal);
@@ -50,9 +53,9 @@ namespace TuCalcuTeApuesto.Controllers
         public ActionResult Upload2(HttpPostedFileBase files)
         {
 
-            string rutaCompleta = getFile(files);
+            string rutaCompleta = GetFile(files);
 
-            ListaModel listaFinal = cargarDataFinal(rutaCompleta);
+            ListaModel listaFinal = CargarDataFinal(rutaCompleta);
 
             //HttpContext.Session.SetObject("ObjetoComplejo", listaFinal);
 
@@ -126,7 +129,7 @@ namespace TuCalcuTeApuesto.Controllers
 
         #region "Metodos"
 
-        public ListaModel cargaDataModelo(string pathCarpeta, string fileName = "")
+        public ListaModel CargaDataModelo(string pathCarpeta, string fileName = "")
         {
             ListaModel listaFinal = new ListaModel();
             listaFinal.Lista = new List<ModeloModel>();
@@ -171,8 +174,8 @@ namespace TuCalcuTeApuesto.Controllers
                 else
                 {
                     DateTime fechaHoy = DateTime.Today;
-                    var diaHoy = getDia(fechaHoy);
-                    var mesHoy = getMes(fechaHoy);
+                    var diaHoy = GetDia(fechaHoy);
+                    var mesHoy = GetMes(fechaHoy);
 
                     var mydia = DateTime.Today.Day.ToString().PadLeft(2, '0');
 
@@ -185,10 +188,10 @@ namespace TuCalcuTeApuesto.Controllers
                     rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
                 }
 
-                List<string> lstFinal = formateaData(rutaCompleta);
+                List<string> lstFinal = FormateaData(rutaCompleta);
 
-                DataTable dt = formateaDataFinal(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
-                listaFinal = cargarListaFinal(dt);
+                DataTable dt = FormateaDataFinal(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
+                listaFinal = CargarListaFinal(dt);
 
             }
 
@@ -199,12 +202,10 @@ namespace TuCalcuTeApuesto.Controllers
             listaFinal.ListaFiles = listaFileModel;
             listaFinal.Archivo = fileModel;
 
-            ViewBag.ListaTorneos = new MultiSelectList(listaTorneos, "Value", "Text");
-
             return listaFinal;
         }
 
-        public static string getDia(DateTime fecha)
+        public static string GetDia(DateTime fecha)
         {
             switch (fecha.DayOfWeek)
             {
@@ -227,7 +228,7 @@ namespace TuCalcuTeApuesto.Controllers
             }
         }
 
-        public static string getMes(DateTime fecha)
+        public static string GetMes(DateTime fecha)
         {
             switch (fecha.Month)
             {
@@ -307,7 +308,7 @@ namespace TuCalcuTeApuesto.Controllers
             return dt;
         }
 
-        private List<CabeceraModel> cargarCabeceras(DataTable dt)
+        private List<CabeceraModel> CargarCabeceras(DataTable dt)
         {
 
             string[] columnNames = dt.Columns.Cast<DataColumn>()
@@ -319,14 +320,14 @@ namespace TuCalcuTeApuesto.Controllers
             var i = 0;
             foreach (var item in columnNames)
             {
-                if (item != "FLAG")
+                if (item != "FLAG" && item != "NOMBRE" && item != "FECHA" && item != "PROGRAMA")
                 {
                     CabeceraModel objCabecera = new CabeceraModel();
                     objCabecera.Id = i + 1;
                     objCabecera.Text = item;
                     objCabecera.Value = i;
                     objCabecera.IsChecked = true;
-                    objCabecera.IdGrupo = evalcolumnNames(item);
+                    objCabecera.IdGrupo = EvalcolumnNames(item);
                     listaCabeceras.Add(objCabecera);
                     i++;
                 }
@@ -336,7 +337,7 @@ namespace TuCalcuTeApuesto.Controllers
 
         }
 
-        private int evalcolumnNames(string colName)
+        private int EvalcolumnNames(string colName)
         {
             var ret = 0;
             if (colName == ("TORNEO")) ret = 0;
@@ -383,7 +384,7 @@ namespace TuCalcuTeApuesto.Controllers
             return ret;
         }
 
-        private List<TorneoModel> cargarTorneos(DataTable dt)
+        private List<TorneoModel> CargarTorneos(DataTable dt)
         {
             DataView view = new DataView(dt);
             DataTable dtTorneos = view.ToTable(true, "TORNEO");
@@ -399,7 +400,7 @@ namespace TuCalcuTeApuesto.Controllers
                 objTorneo.Text = item;
                 objTorneo.Value = i;
                 objTorneo.IsChecked = true;
-                objTorneo.Imagen = obtenerUrlImagen(item);
+                objTorneo.Imagen = ObtenerUrlImagen(item);
                 objTorneo.IsSelected = "selected";
                 listaTorneos.Add(objTorneo);
                 i++;
@@ -408,7 +409,7 @@ namespace TuCalcuTeApuesto.Controllers
             return listaTorneos;
         }
 
-        private string obtenerUrlImagen(string torneo)
+        private string ObtenerUrlImagen(string torneo)
         {
             string url = "";
 
@@ -548,7 +549,8 @@ namespace TuCalcuTeApuesto.Controllers
             return url;
 
         }
-        private List<int> cargarCabecerasVisiblesFav(DataTable dt)
+
+        private List<int> CargarCabecerasVisiblesFav(DataTable dt)
         {
             List<int> lstHideColumnasLoad = new List<int>();
 
@@ -578,7 +580,7 @@ namespace TuCalcuTeApuesto.Controllers
             return lstHideColumnasLoad;
         }
 
-        private List<int> cargarCabecerasVisiblesMin(DataTable dt)
+        private List<int> CargarCabecerasVisiblesMin(DataTable dt)
         {
             List<int> lstHideColumnasLoad = new List<int>();
 
@@ -608,8 +610,9 @@ namespace TuCalcuTeApuesto.Controllers
             return lstHideColumnasLoad;
         }
 
-        private ListaModel cargarListaFinal(DataTable dt)
+        private ListaModel CargarListaFinal(DataTable dt)
         {
+
             ListaModel listaFinal = new ListaModel();
             listaFinal.Lista = new List<ModeloModel>();
             var i = 1;
@@ -666,7 +669,7 @@ namespace TuCalcuTeApuesto.Controllers
             return listaFinal;
         }
 
-        private ListaModel cargarDataFinal(string path)
+        private ListaModel CargarDataFinal(string path)
         {
             ListaModel listaFinal = new ListaModel();
             List<int> listaCabecerasFav = new List<int>();
@@ -677,19 +680,19 @@ namespace TuCalcuTeApuesto.Controllers
 
             listaFinal.Lista = new List<ModeloModel>();
 
-            List<string> lstFinal = formateaData(path);
+            List<string> lstFinal = FormateaData(path);
 
-            DataTable dt = formateaDataFinal(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
+            DataTable dt = FormateaDataFinal(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
 
             //var pathCarpeta = Path.Combine(Directory.GetCurrentDirectory(), "Files");
             var pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
 
-            listaFinal = cargaDataModelo(pathCarpeta);
-
+            listaFinal = CargaDataModelo(pathCarpeta);
+            
             return listaFinal;
         }
 
-        private string getFile(HttpPostedFileBase files)
+        private string GetFile(HttpPostedFileBase files)
         {
             var filepathName = string.Empty;
             if (files != null)
@@ -726,7 +729,7 @@ namespace TuCalcuTeApuesto.Controllers
             return filepathName;
         }
 
-        private string evalNombresEquipos(int index, string[] campos, string line)
+        private string EvalNombresEquipos(int index, string[] campos, string line)
         {
             string local;
             for (int i = 0; i <= 10; i++)
@@ -986,7 +989,7 @@ namespace TuCalcuTeApuesto.Controllers
             return line;
         }
 
-        private List<string> formateaData(string rutaCompleta)
+        private List<string> FormateaData(string rutaCompleta)
         {
             List<string> lstFinal = new List<string>();
             if (!String.IsNullOrEmpty(rutaCompleta))
@@ -1008,7 +1011,7 @@ namespace TuCalcuTeApuesto.Controllers
                         }
 
                         string[] campos = line.Split(x);
-                        line = evalNombresEquipos(0, campos, line);
+                        line = EvalNombresEquipos(0, campos, line);
                         lstFinal.Add(line);
 
                     }
@@ -1017,15 +1020,15 @@ namespace TuCalcuTeApuesto.Controllers
             return lstFinal;
         }
 
-        private DataTable formateaDataFinal(List<string> lstFinal, ref List<CabeceraModel> listaCabeceras, ref List<TorneoModel> listaTorneos, ref List<int> listaCabecerasFav, ref List<int> listaCabecerasMin)
+        private DataTable FormateaDataFinal(List<string> lstFinal, ref List<CabeceraModel> listaCabeceras, ref List<TorneoModel> listaTorneos, ref List<int> listaCabecerasFav, ref List<int> listaCabecerasMin)
         {
             char[] x = { ' ' }; // delimitador
 
             DataTable dt = CargarTabla();
 
-            listaCabeceras = cargarCabeceras(dt);
-            listaCabecerasFav = cargarCabecerasVisiblesFav(dt);
-            listaCabecerasMin = cargarCabecerasVisiblesMin(dt);
+            listaCabeceras = CargarCabeceras(dt);
+            listaCabecerasFav = CargarCabecerasVisiblesFav(dt);
+            listaCabecerasMin = CargarCabecerasVisiblesMin(dt);
 
             for (int i = 0; i < lstFinal.Count; i++)
             {
@@ -1048,12 +1051,12 @@ namespace TuCalcuTeApuesto.Controllers
                 dt.Rows[k]["LOCAL"] = local;
                 dt.Rows[k]["VISITA"] = visita;
 
-                string imagen = obtenerUrlImagen(torneo);
+                string imagen = ObtenerUrlImagen(torneo);
                 dt.Rows[k]["FLAG"] = imagen;
 
             }
 
-            listaTorneos = cargarTorneos(dt);
+            listaTorneos = CargarTorneos(dt);
 
             for (int i = 0; i < listaCabecerasFav.Count; i++)
             {
@@ -1113,7 +1116,7 @@ namespace TuCalcuTeApuesto.Controllers
                         DataRow row = listaFinal.NewRow();
 
                         line = fileArray[i].ToString();
-                        if (validaTextoEnLinea(line) == true)
+                        if (ValidaTextoEnLinea(line) == true)
                         {
                             if (line.Contains("NUEVAS APUESTAS"))
                                 break;
@@ -1134,11 +1137,11 @@ namespace TuCalcuTeApuesto.Controllers
                             }
                             else
                             {
-                                if (line.Contains("V-VAREN"))
-                                    line = line.Replace("V-VAREN", "V VAREN");
+                                if (line.Contains("V-"))
+                                    line = line.Replace("V-", "V ");
 
-                                if (line.Contains("AL-FUJIRAH"))
-                                    line = line.Replace("AL-FUJIRAH", "AL FUJIRAH");
+                                if (line.Contains("AL-"))
+                                    line = line.Replace("AL-", "AL ");
 
                                 if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
                                     line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
@@ -1179,6 +1182,7 @@ namespace TuCalcuTeApuesto.Controllers
                         }
 
                     }
+
                 }
             }
             catch (Exception e)
@@ -1190,7 +1194,7 @@ namespace TuCalcuTeApuesto.Controllers
 
         }
 
-        public bool validaTextoEnLinea(string texto)
+        public bool ValidaTextoEnLinea(string texto)
         {
             bool ret = true;
             if (texto.Contains("www.teapuesto.com.pe"))
@@ -1264,7 +1268,7 @@ namespace TuCalcuTeApuesto.Controllers
                     string[] theLines = thePage.Split('\n');
                     foreach (var theLine in theLines)
                     {
-                        bool isValidLine = validaTextoEnLinea(theLine);
+                        bool isValidLine = ValidaTextoEnLinea(theLine);
                         if (isValidLine)
                         {
 
@@ -1308,26 +1312,39 @@ namespace TuCalcuTeApuesto.Controllers
             }
         }
 
-        public List<string> getProgramasFromPdfStrategy(string path = "")
+        public string EvalNombreDia(string nom)
+        {
+            if (nom.Contains("Á"))
+                nom = nom.Replace("Á", "A");
+            if (nom.Contains("É"))
+                nom = nom.Replace("É", "E");
+            if (nom.Contains("Í"))
+                nom = nom.Replace("Í", "I");
+            if (nom.Contains("Ó"))
+                nom = nom.Replace("Ó", "O");
+            if (nom.Contains("Ú"))
+                nom = nom.Replace("Ú", "U");
+            
+            return nom;
+        }
+
+        public List<string> GetProgramasFromPdfStrategy(string path = "")
         {
             List<string> listaProgramas = new List<string>();
-            string nombrePrograma = string.Empty;
-
+            
             path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
 
             ITextExtractionStrategy its = new iTextSharp.text.pdf.parser.LocationTextExtractionStrategy();
 
             using (PdfReader reader = new PdfReader(path))
             {
-                StringBuilder text = new StringBuilder();
-
                 for (int i = 1; i <= reader.NumberOfPages; i++)
                 {
                     string thePage = PdfTextExtractor.GetTextFromPage(reader, i, its);
                     string[] theLines = thePage.Split('\n');
                     foreach (var theLine in theLines)
                     {
-                        bool isValidLine = validaTextoEnLinea(theLine);
+                        bool isValidLine = ValidaTextoEnLinea(theLine);
                         if (isValidLine)
                         {
                             if (theLine.Contains("PROGRAMA") && theLine.Length < 50)
@@ -1338,12 +1355,705 @@ namespace TuCalcuTeApuesto.Controllers
                     }
                 }
 
+                string nombrePrograma = "PROGRAMAS";
+                StringBuilder text = new StringBuilder();
+                text.AppendLine(nombrePrograma);
                 List<string> listaProgramasUnicos = listaProgramas.Select(x => x).Distinct().ToList();
+                foreach (var row in listaProgramasUnicos)
+                {
+                    var newrow = EvalNombreDia(row);
+                    text.AppendLine(newrow);
+                }
+                
+                var newFileNameOriginal = String.Concat(nombrePrograma, ".txt");
+                var filepathOriginal = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa","SSIS", newFileNameOriginal);
+                //System.IO.File.WriteAllText(filepathOriginal, text.ToString());
+                using (FileStream fs = new FileStream(filepathOriginal, FileMode.Create))
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(text.ToString());
+                    fs.Write(bytes, 0, bytes.Length);
+                    fs.Close();
+                }
+
                 return listaProgramasUnicos;
 
             }
+
+             
         }
 
+        #endregion
+
+        #region "SSIS"
+
+        public void CreaArchivosSSIS()
+        {
+            string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
+            var listaProgramas = GetProgramasFromPdfStrategy();
+            ExtractTextFromPdfSSIS(path);
+
+        }
+
+        public string ExtractTextFromPdfSSIS(string path)
+        {
+            string ret = "";
+            var newFileNameOriginal = String.Concat("TA-ED-Regular-Inicial", ".txt");
+            var filepath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", newFileNameOriginal);
+
+            try
+            {
+                using (PdfReader reader = new PdfReader(path))
+                {
+                    StringBuilder text = new StringBuilder();
+
+                    for (int i = 1; i <= reader.NumberOfPages; i++)
+                    {
+                        text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
+                    }
+
+                    System.IO.File.WriteAllText(filepath, text.ToString());
+
+                    //crear un nuevo file limpio
+                    List<string> listaProgramas = new List<string>();
+                    DataTable listaFinal = new DataTable();
+                    listaFinal.Columns.Add("Codigo");
+                    listaFinal.Columns.Add("Nombre");
+                    listaFinal.Columns.Add("Fecha");
+                    listaFinal.Columns.Add("Linea");
+
+                    string codigoProg = string.Empty;
+                    string nombreProg = string.Empty;
+                    string fechaProg = string.Empty;
+
+                    var newFileName = String.Concat("TA-ED-Regular", ".txt");
+                    var filepathNew = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", newFileName);
+
+                    string[] empty = new string[0];
+                    System.IO.File.WriteAllLines(filepathNew, empty);
+                    StreamWriter fileClean = new StreamWriter(filepathNew, append: true);
+
+                    string[] fileArray = System.IO.File.ReadAllLines(filepath);
+
+                    string nomProgramaInicial = string.Empty;
+                    string line = "";
+                    var lstFinal = new List<string>();
+                    for (int i = 0; i < fileArray.Length; i++)
+                    {
+                        DataRow row = listaFinal.NewRow();
+
+                        line = fileArray[i].ToString();
+                        if (ValidaTextoEnLinea(line) == true)
+                        {
+                            if (line.Contains("NUEVAS APUESTAS"))
+                                break;
+
+                            if (line.Contains("PROGRAMA"))
+                            {
+                                if (nomProgramaInicial != line)
+                                {
+                                    fileClean.WriteLine(line);
+
+                                    nomProgramaInicial = line;
+                                    listaProgramas.Add(line);
+
+                                    var index = line.ToString().ToUpper().IndexOf("PROGRAMA");
+                                    codigoProg = line.ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
+                                    nombreProg = line.ToString().Replace(".txt", string.Empty).Trim();
+                                    fechaProg = line.ToString().Split('-').GetValue(0).ToString().Trim();
+
+                                }
+                            }
+                            else
+                            {
+                                if (line.Contains("V-"))
+                                    line = line.Replace("V-", "V ");
+
+                                if (line.Contains("AL-"))
+                                    line = line.Replace("AL-", "AL ");
+
+                                if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
+                                    line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
+
+                                fileClean.WriteLine(line);
+
+                                row["Codigo"] = codigoProg;
+                                row["Nombre"] = nombreProg.Replace(" ", "|"); ;
+                                row["Fecha"] = EvalFechaPrograma(fechaProg); //fechaProg.Replace(" ","|");
+                                row["Linea"] = line;
+                                listaFinal.Rows.Add(row);
+                            }
+
+                        }
+                    }
+                    fileClean.Close();
+
+                    //string addResultSSIS = "PROGRAMA TORNEO HORA COD MIN LOCAL L E V VISITA LoE LoV EoV PTL PTE PTV STL STE STV LL EL VL LE EE VE LV EV VV MENOSUNO5 MASUNOCINCO MENOSDOSCINCO MASDOSCINCO MENOSTRESCINCO MASTRESCINCO CEROUNO DOSTRES CUATROMAS AMBOS NINGUNO IMPAR PAR" + "\n";
+                    string addResultSSIS = string.Empty;
+
+                    for (int j = 0; j <= listaProgramas.Count - 1; j++)
+                    {
+
+                        var index = listaProgramas[j].ToString().ToUpper().IndexOf("PROGRAMA");
+                        codigoProg = listaProgramas[j].ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
+
+                        DataRow[] result = listaFinal.Select("Codigo = " + codigoProg);
+                        string addResult = string.Empty;
+                        foreach (DataRow row in result)
+                        {
+                            //addResult = addResult + row["Nombre"] + "\n";
+                            addResultSSIS = addResultSSIS + codigoProg + " " + row["Nombre"] + " " + row["Fecha"] + " " + row["Linea"] + "\n";
+                        }
+
+                        ////crear files unicos
+                        //var fileUnicoName = String.Concat(listaProgramas[j], ".txt");
+                        //var fileUnicoPath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileUnicoName);
+
+                        //using (FileStream fs = new FileStream(fileUnicoPath, FileMode.Create))
+                        //{
+                        //    byte[] bytes = Encoding.UTF8.GetBytes(addResult);
+                        //    fs.Write(bytes, 0, bytes.Length);
+                        //    fs.Close();
+                        //}
+
+                    }
+
+                    //PARA SSIS
+                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular_SSIS", ".txt");
+                    var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
+
+                    using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
+                    {
+                        byte[] bytes = Encoding.UTF8.GetBytes(addResultSSIS);
+                        fs.Write(bytes, 0, bytes.Length);
+                        fs.Close();
+                    }
+
+                    ret = fileUnicoPathSSIS;
+
+                    //CargaDataModeloSSIS
+                    var pathCarpetaSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS");
+                    var listaSSIS = CargaDataModeloSSIS(pathCarpetaSSIS, fileUnicoNameSSIS);
+
+                }
+            }
+            catch (Exception e)
+            {
+                ViewBag.ErrorMessage = e.Message.ToString();
+                ret = "";
+            }
+            return ret;
+
+        }
+
+        public ListaModel CargaDataModeloSSIS(string pathCarpeta, string fileName = "")
+        {
+            ListaModel listaFinal = new ListaModel();
+            listaFinal.Lista = new List<ModeloModel>();
+
+            List<int> listaCabecerasFav = new List<int>();
+            List<int> listaCabecerasMin = new List<int>();
+            List<CabeceraModel> listaCabeceras = new List<CabeceraModel>();
+            List<TorneoModel> listaTorneos = new List<TorneoModel>();
+            List<FileModel> listaFileModel = new List<FileModel>();
+            FileModel fileModel = new FileModel();
+
+            System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(pathCarpeta);
+            List<FileInfo> listaFileInfo = directory.GetFiles().Where(x => x.FullName.Contains(fileName)).ToList(); 
+            List<FileInfo> listaFilter = new List<FileInfo>();
+            var rutaCompleta = string.Empty;
+
+            if (listaFileInfo.Count > 0)
+            {
+
+                foreach (FileInfo lista in listaFileInfo)
+                {
+
+                    FileModel file = new FileModel
+                    {
+                        //var index = lista.Name.ToUpper().IndexOf("PROGRAMA");
+                        //var cod = lista.Name.Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
+
+                        //file.Codigo = cod;
+                        Extension = lista.Extension,
+                        Name = lista.Name,
+                        NameShow = lista.Name.Replace(".txt", string.Empty),
+                        Length = lista.Length.ToString(),
+                        CreationTimeUtc = lista.LastWriteTime.ToString()
+                    };
+                    listaFileModel.Add(file);
+                }
+
+                fileModel = listaFileModel.FirstOrDefault();
+                rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
+
+                //listaFileModel.Sort((x, y) => x.Codigo.CompareTo(y.Codigo));
+
+                //if (!String.IsNullOrEmpty(fileName))
+                //{
+                //    fileModel = listaFileModel.Where(w => w.Name.Contains(fileName)).FirstOrDefault();
+                //    rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
+                //}
+                //else
+                //{
+                //    DateTime fechaHoy = DateTime.Today;
+                //    var diaHoy = getDia(fechaHoy);
+                //    var mesHoy = getMes(fechaHoy);
+
+                //    var mydia = DateTime.Today.Day.ToString().PadLeft(2, '0');
+
+                //    var cad = diaHoy + " " + mydia + " DE " + mesHoy;
+
+                //    fileModel = listaFileModel.Where(w => w.Name.Contains(cad)).FirstOrDefault();
+                //    if (fileModel.Name == null)
+                //        fileModel = listaFileModel.FirstOrDefault();
+
+                //    rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
+                //}
+
+                //rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
+
+                List<string> lstFinal = FormateaDataSSIS(rutaCompleta);
+
+                DataTable dt = FormateaDataFinalSSIS(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
+                listaFinal = CargarListaFinal(dt);
+
+            }
+
+            listaFinal.ListaCabeceras = listaCabeceras;
+            listaFinal.ListaTorneos = listaTorneos;
+            listaFinal.ListaCabecerasFav = listaCabecerasFav;
+            listaFinal.ListaCabecerasMin = listaCabecerasMin;
+            listaFinal.ListaFiles = listaFileModel;
+            listaFinal.Archivo = fileModel;
+                       
+
+            return listaFinal;
+        }
+
+        private List<string> FormateaDataSSIS(string rutaCompleta)
+        {
+            List<string> lstFinal = new List<string>();
+            if (!String.IsNullOrEmpty(rutaCompleta))
+            {
+                string[] fileArray = System.IO.File.ReadAllLines(rutaCompleta);
+                char[] x = { ' ' }; // delimitador
+
+                string line = "";
+                lstFinal = new List<string>();
+                for (int i = 0; i < fileArray.Length; i++)
+                {
+                    line = fileArray[i].ToString();
+                    if (line != "")
+                    {
+                        //elimina la columna en vivo
+                        if (line.Substring(0, 2).ToUpper() == "L ")
+                        {
+                            line = line.Substring(2, line.Length - 2);
+                        }
+
+                        string[] campos = line.Split(x);
+                        line = EvalNombresEquiposSSIS(0, campos, line);
+                        lstFinal.Add(line);
+
+                    }
+                }
+            }
+            return lstFinal;
+        }
+
+        private string EvalNombresEquiposSSIS(int index, string[] campos, string line)
+        {
+            string local;
+            for (int i = 3; i <= 10; i++)
+            {
+                double irpta1 = 0;
+                string valor1 = campos[4 + index + i].ToString();
+                bool result1 = false;
+                if (valor1.Contains("."))
+                {
+                    result1 = double.TryParse(valor1, out irpta1);
+                }
+                if (valor1.Contains("-")) result1 = true;
+
+                if (result1 == false)
+                {
+                    local = valor1;
+                    double irpta2 = 0;
+                    string valor2 = campos[4 + index + i + 1].ToString();
+                    bool result2 = false;
+                    if (valor2.Contains("."))
+                    {
+                        result2 = double.TryParse(valor2, out irpta2);
+                    }
+                    if (valor2.Contains("-")) result2 = true;
+
+                    if (result2 == false)
+                    {
+                        local = local + "+" + valor2;
+                        double irpta3 = 0;
+                        string valor3 = campos[4 + index + i + 2].ToString();
+                        bool result3 = false;
+                        if (valor3.Contains("."))
+                        {
+                            result3 = double.TryParse(valor3, out irpta3);
+                        }
+                        if (valor3.Contains("-")) result3 = true;
+
+                        if (result3 == false)
+                        {
+                            local = local + "+" + valor3;
+                            double irpta4 = 0;
+                            string valor4 = campos[4 + index + i + 3].ToString();
+                            bool result4 = false;
+                            if (valor4.Contains("."))
+                            {
+                                result4 = double.TryParse(valor4, out irpta4);
+                            }
+                            if (valor4.Contains("-")) result4 = true;
+
+                            if (result4 == false)
+                            {
+                                local = local + "+" + valor4;
+                                double irpta5 = 0;
+                                string valor5 = campos[4 + index + i + 4].ToString();
+                                bool result5 = false;
+                                if (valor5.Contains("."))
+                                {
+                                    result5 = double.TryParse(valor5, out irpta5);
+                                }
+                                if (valor5.Contains("-")) result5 = true;
+
+                                if (result5 == false)
+                                {
+                                    local = local + "+" + valor5;
+                                    double irpta6 = 0;
+                                    string valor6 = campos[4 + index + i + 5].ToString();
+                                    bool result6 = false;
+                                    if (valor6.Contains("."))
+                                    {
+                                        result6 = double.TryParse(valor6, out irpta6);
+                                    }
+                                    if (valor6.Contains("-")) result6 = true;
+
+                                    if (result6 == false)
+                                    {
+                                        local = local + "+" + valor6;
+                                        double irpta7 = 0;
+                                        string valor7 = campos[4 + index + i + 6].ToString();
+                                        bool result7 = false;
+                                        if (valor7.Contains("."))
+                                        {
+                                            result7 = double.TryParse(valor7, out irpta7);
+                                        }
+                                        if (valor7.Contains("-")) result7 = true;
+                                    }
+                                    else
+                                    {
+                                        string valorOld = valor1 + " " + valor2 + " " + valor3 + " " + valor4 + " " + valor5;
+                                        line = line.Replace(valorOld, local);
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    string valorOld = valor1 + " " + valor2 + " " + valor3 + " " + valor4;
+                                    line = line.Replace(valorOld, local);
+                                    break;
+                                }
+
+                            }
+                            else
+                            {
+                                string valorOld = valor1 + " " + valor2 + " " + valor3;
+                                line = line.Replace(valorOld, local);
+                                break;
+                            }
+
+                        }
+                        else
+                        {
+                            string valorOld = valor1 + " " + valor2;
+                            line = line.Replace(valorOld, local);
+                            break;
+                        }
+
+                    }
+                    else
+                    {
+                        string valorOld = valor1;
+                    }
+                }
+                else
+                {
+                    string valorOld = valor1;
+                }
+
+            }
+
+            campos = line.Split(' ');
+
+            string visita;
+            for (int i = 1; i <= 10; i++)
+            {
+                double irpta1 = 0;
+                string valor1 = campos[8 + index + i].ToString();
+                bool result1 = false;
+                if (valor1.Contains("."))
+                {
+                    result1 = double.TryParse(valor1, out irpta1);
+                }
+                if (valor1.Contains("-")) result1 = true;
+
+                if (result1 == false)
+                {
+                    visita = valor1;
+                    double irpta2 = 0;
+                    string valor2 = campos[8 + index + i + 1].ToString();
+                    bool result2 = false;
+                    if (valor2.Contains("."))
+                    {
+                        result2 = double.TryParse(valor2, out irpta2);
+                    }
+                    if (valor2.Contains("-")) result2 = true;
+
+                    if (result2 == false)
+                    {
+                        visita = visita + "+" + valor2;
+                        double irpta3 = 0;
+                        string valor3 = campos[8 + index + i + 2].ToString();
+                        bool result3 = false;
+                        if (valor3.Contains("."))
+                        {
+                            result3 = double.TryParse(valor3, out irpta3);
+                        }
+                        if (valor3.Contains("-")) result3 = true;
+
+                        if (result3 == false)
+                        {
+                            visita = visita + "+" + valor3;
+                            double irpta4 = 0;
+                            string valor4 = campos[8 + index + i + 3].ToString();
+                            bool result4 = false;
+                            if (valor4.Contains("."))
+                            {
+                                result4 = double.TryParse(valor4, out irpta4);
+                            }
+                            if (valor4.Contains("-")) result4 = true;
+
+                            if (result4 == false)
+                            {
+                                visita = visita + "+" + valor4;
+                                double irpta5 = 0;
+                                string valor5 = campos[8 + index + i + 4].ToString();
+                                bool result5 = false;
+                                if (valor5.Contains("."))
+                                {
+                                    result5 = double.TryParse(valor5, out irpta5);
+                                }
+                                if (valor5.Contains("-")) result5 = true;
+
+                                if (result5 == false)
+                                {
+                                    visita = visita + "+" + valor5;
+                                    double irpta6 = 0;
+                                    string valor6 = campos[8 + index + i + 5].ToString();
+                                    bool result6 = false;
+                                    if (valor6.Contains("."))
+                                    {
+                                        result6 = double.TryParse(valor6, out irpta6);
+                                    }
+                                    if (valor6.Contains("-")) result6 = true;
+
+                                    if (result6 == false)
+                                    {
+                                        visita = visita + "+" + valor6;
+                                        double irpta7 = 0;
+                                        string valor7 = campos[8 + index + i + 6].ToString();
+                                        bool result7 = false;
+                                        if (valor7.Contains("."))
+                                        {
+                                            result7 = double.TryParse(valor7, out irpta7);
+                                        }
+                                        if (valor7.Contains("-")) result7 = true;
+                                    }
+                                    else
+                                    {
+                                        string valorOld = valor1 + " " + valor2 + " " + valor3 + " " + valor4 + " " + valor5;
+                                        line = line.Replace(valorOld, visita);
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    string valorOld = valor1 + " " + valor2 + " " + valor3 + " " + valor4;
+                                    line = line.Replace(valorOld, visita);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                string valorOld = valor1 + " " + valor2 + " " + valor3;
+                                line = line.Replace(valorOld, visita);
+                                break;
+                            }
+
+                        }
+                        else
+                        {
+                            string valorOld = valor1 + " " + valor2;
+                            line = line.Replace(valorOld, visita);
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        string valorOld = valor1;
+                    }
+                }
+                else
+                {
+                    string valorOld = valor1;
+                }
+
+            }
+
+            //lstFinal.Add(line);
+            return line;
+        }
+
+        private DataTable FormateaDataFinalSSIS(List<string> lstFinal, ref List<CabeceraModel> listaCabeceras, ref List<TorneoModel> listaTorneos, ref List<int> listaCabecerasFav, ref List<int> listaCabecerasMin)
+        {
+            char[] x = { ' ' }; // delimitador
+
+            DataTable dt = CargarTablaSSIS();
+
+            listaCabeceras = CargarCabeceras(dt);
+            listaCabecerasFav = CargarCabecerasVisiblesFav(dt);
+            listaCabecerasMin = CargarCabecerasVisiblesMin(dt);
+
+            for (int i = 0; i < lstFinal.Count; i++)
+            {
+                var columns = lstFinal[i].Split(x);
+                DataRow row = dt.NewRow();
+                for (int ii = 0; ii < columns.Length; ii++)
+                {
+                    string valor = columns[ii].ToString();
+                    row[ii] = valor;
+                }
+                dt.Rows.Add(row);
+            }
+
+            for (int k = 0; k <= dt.Rows.Count - 1; k++)
+            {
+                string torneo = dt.Rows[k]["TORNEO"].ToString();
+                string local = dt.Rows[k]["LOCAL"].ToString().Replace("+", " ");
+                string visita = dt.Rows[k]["VISITA"].ToString().Replace("+", " ");
+                string nombreProg = dt.Rows[k]["NOMBRE"].ToString().Replace("|", " ");
+                string fechaProg = dt.Rows[k]["FECHA"].ToString().Replace("|", " ");
+
+                dt.Rows[k]["LOCAL"] = local;
+                dt.Rows[k]["VISITA"] = visita;
+                dt.Rows[k]["NOMBRE"] = nombreProg;
+                dt.Rows[k]["FECHA"] = fechaProg;
+                dt.Rows[k]["FLAG"] = ObtenerUrlImagen(torneo);
+
+            }
+
+            listaTorneos = CargarTorneos(dt);
+
+            for (int i = 0; i < listaCabecerasFav.Count; i++)
+            {
+                var Index = listaCabecerasFav[i].ToString();
+                listaCabeceras[Convert.ToInt32(Index)].IsChecked = false;
+            }
+
+            for (int i = 0; i < listaCabecerasMin.Count; i++)
+            {
+                var Index = listaCabecerasMin[i].ToString();
+                listaCabeceras[Convert.ToInt32(Index)].IsChecked = false;
+            }
+
+            return dt;
+        }
+
+        private string EvalFechaPrograma(string fechaProg)
+        {
+            string ret = string.Empty;
+            var array = fechaProg.Split(' ');
+            var dia = array.GetValue(1).ToString();
+            var mes = EvaluaNombreMes(array.GetValue(3).ToString());
+            ret = dia + "/" + mes + "/" + DateTime.Today.Year.ToString();
+            return ret;
+        }
+
+        private string EvaluaNombreMes(string nombreMes)
+        {
+            string ret = string.Empty;
+            if (nombreMes == "ENERO") ret = "01";
+            else if (nombreMes == "FEBRERO") ret = "02";
+            else if (nombreMes == "MARZO") ret = "03";
+            else if (nombreMes == "ABRIL") ret = "04";
+            else if (nombreMes == "MAYO") ret = "05";
+            else if (nombreMes == "JUNIO") ret = "06";
+            else if (nombreMes == "JULIO") ret = "07";
+            else if (nombreMes == "AGOSTO") ret = "08";
+            else if (nombreMes == "SEPTIEMBRE") ret = "09";
+            else if (nombreMes == "OCTUBRE") ret = "10";
+            else if (nombreMes == "NOVIEMBRE") ret = "11";
+            else if (nombreMes == "DICIEMBRE") ret = "12";
+            return ret;
+        }
+        private DataTable CargarTablaSSIS()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("PROGRAMA");
+            dt.Columns.Add("NOMBRE");
+            dt.Columns.Add("FECHA");
+            dt.Columns.Add("TORNEO");
+            dt.Columns.Add("HORA");
+            dt.Columns.Add("COD");
+            dt.Columns.Add("MINIMO");
+            dt.Columns.Add("LOCAL");
+            dt.Columns.Add("L");
+            dt.Columns.Add("E");
+            dt.Columns.Add("V");
+            dt.Columns.Add("VISITA");
+            dt.Columns.Add("LoE");
+            dt.Columns.Add("LoV");
+            dt.Columns.Add("EoV");
+            dt.Columns.Add("1TL");
+            dt.Columns.Add("1TE");
+            dt.Columns.Add("1TV");
+            dt.Columns.Add("2TL");
+            dt.Columns.Add("2TE");
+            dt.Columns.Add("2TV");
+            dt.Columns.Add("L/L");
+            dt.Columns.Add("E/L");
+            dt.Columns.Add("V/L");
+            dt.Columns.Add("L/E");
+            dt.Columns.Add("E/E");
+            dt.Columns.Add("V/E");
+            dt.Columns.Add("L/V");
+            dt.Columns.Add("E/V");
+            dt.Columns.Add("V/V");
+            dt.Columns.Add("-1.5");
+            dt.Columns.Add("+1.5");
+            dt.Columns.Add("-2.5");
+            dt.Columns.Add("+2.5");
+            dt.Columns.Add("-3.5");
+            dt.Columns.Add("+3.5");
+            dt.Columns.Add("0-1");
+            dt.Columns.Add("2-3");
+            dt.Columns.Add("4+");
+            dt.Columns.Add("A");
+            dt.Columns.Add("NA");
+            dt.Columns.Add("I");
+            dt.Columns.Add("P");
+            dt.Columns.Add("FLAG");
+            return dt;
+        }
+
+        
         #endregion
 
     }
