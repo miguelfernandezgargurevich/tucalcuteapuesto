@@ -20,33 +20,14 @@ namespace TuCalcuTeApuesto.Controllers
         public ActionResult Index(string f)
 
         {
-
-            //System.Threading.Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.CreateSpecificCulture("es");
-
-            //System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.CreateSpecificCulture("es");
-
-
             ListaModel listaFinal = new ListaModel();
+            string pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
 
-            var pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
+            ActualizaArchivos(pathCarpeta);
 
-            if (System.IO.Directory.Exists(pathCarpeta))
-            {
-                listaFinal = CargaDataModelo(pathCarpeta, f);
-            }
+            listaFinal = CargaDataModelo(pathCarpeta, f);
 
-
-            string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
-            var ret = ExtractTextFromPdf(path);
-            //var listaProgramas = GetProgramasFromPdfStrategy();
-
-            CreaArchivosSSIS();
-
-            if (ret == true)
-                return View(listaFinal);
-            else
-                return View("Error");
-                        
+            return View(listaFinal);
         }
 
         [HttpPost]
@@ -128,6 +109,42 @@ namespace TuCalcuTeApuesto.Controllers
         }
 
         #region "Metodos"
+        public void ActualizaArchivos(string pathCarpeta)
+        {
+            string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
+            
+
+            System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(pathCarpeta);
+            List<FileInfo> listaFileInfo = directory.GetFiles().ToList();
+
+            DateTime fechaHoy = DateTime.Today;
+            var diaHoy = GetDia(fechaHoy);
+            var mesHoy = GetMes(fechaHoy);
+            var mydia = DateTime.Today.Day.ToString().PadLeft(2, '0');
+            var cad = diaHoy + " " + mydia + " DE " + mesHoy;
+
+            //si no hya archivo de hoy crea
+            var fileModel = listaFileInfo.Where(w => w.Name.Contains(cad)).FirstOrDefault();
+            if (fileModel == null)
+            {
+                ExtractTextFromPdf(path);
+            }
+            else
+            {
+                //la fecha de creacion es menor a hoy actualiza
+                //fileModel = listaFileInfo.FirstOrDefault();
+                var pathFile = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileModel.Name);
+
+                var strLastModified = Convert.ToDateTime(System.IO.File.GetLastWriteTime(pathFile).ToShortDateString());
+                var fechaCreacionFile = Convert.ToDateTime(fileModel.CreationTime.ToShortDateString());
+                var fechaHoyCadena = Convert.ToDateTime(fechaHoy.ToShortDateString());
+                var diasDiff = (fechaHoyCadena - strLastModified).Days;
+                if (diasDiff > 0)
+                {
+                    ExtractTextFromPdf(path);
+                }
+            }
+        }
 
         public ListaModel CargaDataModelo(string pathCarpeta, string fileName = "")
         {
@@ -205,7 +222,7 @@ namespace TuCalcuTeApuesto.Controllers
             return listaFinal;
         }
 
-        public static string GetDia(DateTime fecha)
+        public string GetDia(DateTime fecha)
         {
             switch (fecha.DayOfWeek)
             {
@@ -228,7 +245,7 @@ namespace TuCalcuTeApuesto.Controllers
             }
         }
 
-        public static string GetMes(DateTime fecha)
+        public string GetMes(DateTime fecha)
         {
             switch (fecha.Month)
             {
@@ -320,7 +337,7 @@ namespace TuCalcuTeApuesto.Controllers
             var i = 0;
             foreach (var item in columnNames)
             {
-                if (item != "FLAG" && item != "NOMBRE" && item != "FECHA" && item != "PROGRAMA")
+                if (item != "FLAG")
                 {
                     CabeceraModel objCabecera = new CabeceraModel();
                     objCabecera.Id = i + 1;
@@ -612,7 +629,6 @@ namespace TuCalcuTeApuesto.Controllers
 
         private ListaModel CargarListaFinal(DataTable dt)
         {
-
             ListaModel listaFinal = new ListaModel();
             listaFinal.Lista = new List<ModeloModel>();
             var i = 1;
@@ -688,7 +704,7 @@ namespace TuCalcuTeApuesto.Controllers
             var pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
 
             listaFinal = CargaDataModelo(pathCarpeta);
-            
+
             return listaFinal;
         }
 
@@ -1073,7 +1089,7 @@ namespace TuCalcuTeApuesto.Controllers
             return dt;
         }
 
-        public bool ExtractTextFromPdf(string path)
+        public void ExtractTextFromPdf(string path)
         {
             bool ret = true;
             var newFileNameOriginal = String.Concat("TA-ED-Regular-Inicial", ".txt");
@@ -1092,12 +1108,17 @@ namespace TuCalcuTeApuesto.Controllers
 
                     System.IO.File.WriteAllText(filepath, text.ToString());
 
-                    //crear un nuevo file limpio
                     List<string> listaProgramas = new List<string>();
+                    //crear un nuevo file limpio
                     DataTable listaFinal = new DataTable();
                     listaFinal.Columns.Add("Codigo");
                     listaFinal.Columns.Add("Nombre");
+                    listaFinal.Columns.Add("Fecha");
+                    listaFinal.Columns.Add("Descripcion");
+
                     string codigo = string.Empty;
+                    string nombreProg = string.Empty;
+                    string fechaProg = string.Empty;
 
                     var newFileName = String.Concat("TA-ED-Regular", ".txt");
                     var filepathNew = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", newFileName);
@@ -1132,16 +1153,18 @@ namespace TuCalcuTeApuesto.Controllers
 
                                     var index = line.ToString().ToUpper().IndexOf("PROGRAMA");
                                     codigo = line.ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
+                                    nombreProg = line.ToString().Replace(".txt", string.Empty).Trim();
+                                    fechaProg = line.ToString().Split('-').GetValue(0).ToString().Trim();
 
                                 }
                             }
                             else
                             {
-                                if (line.Contains("V-"))
-                                    line = line.Replace("V-", "V ");
+                                if (line.Contains("V-VAREN"))
+                                    line = line.Replace("V-VAREN", "V VAREN");
 
-                                if (line.Contains("AL-"))
-                                    line = line.Replace("AL-", "AL ");
+                                if (line.Contains("AL-FUJIRAH"))
+                                    line = line.Replace("AL-FUJIRAH", "AL FUJIRAH");
 
                                 if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
                                     line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
@@ -1150,12 +1173,19 @@ namespace TuCalcuTeApuesto.Controllers
 
                                 row["Codigo"] = codigo;
                                 row["Nombre"] = line;
+                                row["Descripcion"] = nombreProg.Replace(" ", "|");
+                                row["Fecha"] = EvalFechaPrograma(fechaProg);
                                 listaFinal.Rows.Add(row);
+
+                               
+
                             }
 
                         }
                     }
                     fileClean.Close();
+
+                    string addResultSSIS = string.Empty;
 
                     //crear files unicos
                     for (int j = 0; j <= listaProgramas.Count - 1; j++)
@@ -1169,6 +1199,7 @@ namespace TuCalcuTeApuesto.Controllers
                         foreach (DataRow row in result)
                         {
                             addResult = addResult + row["Nombre"] + "\n";
+                            addResultSSIS = addResultSSIS + codigo + " " + row["Descripcion"] + " " + row["Fecha"] + " " + row["Nombre"] + "\n";
                         }
 
                         var fileUnicoName = String.Concat(listaProgramas[j], ".txt");
@@ -1183,6 +1214,21 @@ namespace TuCalcuTeApuesto.Controllers
 
                     }
 
+                    //PARA SSIS
+                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular_SSIS", ".txt");
+                    var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
+
+                    using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
+                    {
+                        byte[] bytes = Encoding.UTF8.GetBytes(addResultSSIS);
+                        fs.Write(bytes, 0, bytes.Length);
+                        fs.Close();
+                    }
+                    
+                    //CargaDataModeloSSIS
+                    var pathCarpetaSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS");
+                    var dtFinalSSIS = CargaDataModeloSSIS(fileUnicoPathSSIS);
+
                 }
             }
             catch (Exception e)
@@ -1190,7 +1236,7 @@ namespace TuCalcuTeApuesto.Controllers
                 ViewBag.ErrorMessage = e.Message.ToString();
                 ret = false;
             }
-            return ret;
+            
 
         }
 
@@ -1312,32 +1358,19 @@ namespace TuCalcuTeApuesto.Controllers
             }
         }
 
-        public string EvalNombreDia(string nom)
-        {
-            if (nom.Contains("Á"))
-                nom = nom.Replace("Á", "A");
-            if (nom.Contains("É"))
-                nom = nom.Replace("É", "E");
-            if (nom.Contains("Í"))
-                nom = nom.Replace("Í", "I");
-            if (nom.Contains("Ó"))
-                nom = nom.Replace("Ó", "O");
-            if (nom.Contains("Ú"))
-                nom = nom.Replace("Ú", "U");
-            
-            return nom;
-        }
-
-        public List<string> GetProgramasFromPdfStrategy(string path = "")
+        public List<string> getProgramasFromPdfStrategy(string path = "")
         {
             List<string> listaProgramas = new List<string>();
-            
+            string nombrePrograma = string.Empty;
+
             path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
 
             ITextExtractionStrategy its = new iTextSharp.text.pdf.parser.LocationTextExtractionStrategy();
 
             using (PdfReader reader = new PdfReader(path))
             {
+                StringBuilder text = new StringBuilder();
+
                 for (int i = 1; i <= reader.NumberOfPages; i++)
                 {
                     string thePage = PdfTextExtractor.GetTextFromPage(reader, i, its);
@@ -1355,41 +1388,21 @@ namespace TuCalcuTeApuesto.Controllers
                     }
                 }
 
-                string nombrePrograma = "PROGRAMAS";
-                StringBuilder text = new StringBuilder();
-                text.AppendLine(nombrePrograma);
                 List<string> listaProgramasUnicos = listaProgramas.Select(x => x).Distinct().ToList();
-                foreach (var row in listaProgramasUnicos)
-                {
-                    var newrow = EvalNombreDia(row);
-                    text.AppendLine(newrow);
-                }
-                
-                var newFileNameOriginal = String.Concat(nombrePrograma, ".txt");
-                var filepathOriginal = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa","SSIS", newFileNameOriginal);
-                //System.IO.File.WriteAllText(filepathOriginal, text.ToString());
-                using (FileStream fs = new FileStream(filepathOriginal, FileMode.Create))
-                {
-                    byte[] bytes = Encoding.UTF8.GetBytes(text.ToString());
-                    fs.Write(bytes, 0, bytes.Length);
-                    fs.Close();
-                }
-
                 return listaProgramasUnicos;
 
             }
-
-             
         }
 
         #endregion
+
 
         #region "SSIS"
 
         public void CreaArchivosSSIS()
         {
             string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
-            var listaProgramas = GetProgramasFromPdfStrategy();
+            //var listaProgramas = GetProgramasFromPdfStrategy();
             ExtractTextFromPdfSSIS(path);
 
         }
@@ -1477,8 +1490,8 @@ namespace TuCalcuTeApuesto.Controllers
                                 fileClean.WriteLine(line);
 
                                 row["Codigo"] = codigoProg;
-                                row["Nombre"] = nombreProg.Replace(" ", "|"); ;
-                                row["Fecha"] = EvalFechaPrograma(fechaProg); //fechaProg.Replace(" ","|");
+                                row["Nombre"] = nombreProg.Replace(" ", "|");
+                                row["Fecha"] = EvalFechaPrograma(fechaProg);
                                 row["Linea"] = line;
                                 listaFinal.Rows.Add(row);
                             }
@@ -1489,7 +1502,7 @@ namespace TuCalcuTeApuesto.Controllers
 
                     //string addResultSSIS = "PROGRAMA TORNEO HORA COD MIN LOCAL L E V VISITA LoE LoV EoV PTL PTE PTV STL STE STV LL EL VL LE EE VE LV EV VV MENOSUNO5 MASUNOCINCO MENOSDOSCINCO MASDOSCINCO MENOSTRESCINCO MASTRESCINCO CEROUNO DOSTRES CUATROMAS AMBOS NINGUNO IMPAR PAR" + "\n";
                     string addResultSSIS = string.Empty;
-
+                    var fileUnicoName = string.Empty;
                     for (int j = 0; j <= listaProgramas.Count - 1; j++)
                     {
 
@@ -1501,19 +1514,20 @@ namespace TuCalcuTeApuesto.Controllers
                         foreach (DataRow row in result)
                         {
                             //addResult = addResult + row["Nombre"] + "\n";
+                            addResult = addResultSSIS + codigoProg + " " + row["Nombre"] + " " + row["Fecha"] + " " + row["Linea"] + "\n";
                             addResultSSIS = addResultSSIS + codigoProg + " " + row["Nombre"] + " " + row["Fecha"] + " " + row["Linea"] + "\n";
                         }
 
-                        ////crear files unicos
-                        //var fileUnicoName = String.Concat(listaProgramas[j], ".txt");
-                        //var fileUnicoPath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileUnicoName);
+                        //crear files unicos
+                        fileUnicoName = String.Concat(listaProgramas[j], ".txt");
+                        var fileUnicoPath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileUnicoName);
 
-                        //using (FileStream fs = new FileStream(fileUnicoPath, FileMode.Create))
-                        //{
-                        //    byte[] bytes = Encoding.UTF8.GetBytes(addResult);
-                        //    fs.Write(bytes, 0, bytes.Length);
-                        //    fs.Close();
-                        //}
+                        using (FileStream fs = new FileStream(fileUnicoPath, FileMode.Create))
+                        {
+                            byte[] bytes = Encoding.UTF8.GetBytes(addResult);
+                            fs.Write(bytes, 0, bytes.Length);
+                            fs.Close();
+                        }
 
                     }
 
@@ -1530,9 +1544,12 @@ namespace TuCalcuTeApuesto.Controllers
 
                     ret = fileUnicoPathSSIS;
 
+
+                    var pathCarpetaFiles = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
+
                     //CargaDataModeloSSIS
                     var pathCarpetaSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS");
-                    var listaSSIS = CargaDataModeloSSIS(pathCarpetaSSIS, fileUnicoNameSSIS);
+                    var listaSSIS = CargaDataModeloSSIS(fileUnicoPathSSIS);
 
                 }
             }
@@ -1545,89 +1562,15 @@ namespace TuCalcuTeApuesto.Controllers
 
         }
 
-        public ListaModel CargaDataModeloSSIS(string pathCarpeta, string fileName = "")
+        public DataTable CargaDataModeloSSIS(string rutaCompletaSSIS)
         {
-            ListaModel listaFinal = new ListaModel();
-            listaFinal.Lista = new List<ModeloModel>();
 
-            List<int> listaCabecerasFav = new List<int>();
-            List<int> listaCabecerasMin = new List<int>();
-            List<CabeceraModel> listaCabeceras = new List<CabeceraModel>();
-            List<TorneoModel> listaTorneos = new List<TorneoModel>();
-            List<FileModel> listaFileModel = new List<FileModel>();
-            FileModel fileModel = new FileModel();
+            List<string> lstFinalSSIS = FormateaDataSSIS(rutaCompletaSSIS);
 
-            System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(pathCarpeta);
-            List<FileInfo> listaFileInfo = directory.GetFiles().Where(x => x.FullName.Contains(fileName)).ToList(); 
-            List<FileInfo> listaFilter = new List<FileInfo>();
-            var rutaCompleta = string.Empty;
+            DataTable dtSSIS = FormateaDataFinalSSIS(lstFinalSSIS);
+            
 
-            if (listaFileInfo.Count > 0)
-            {
-
-                foreach (FileInfo lista in listaFileInfo)
-                {
-
-                    FileModel file = new FileModel
-                    {
-                        //var index = lista.Name.ToUpper().IndexOf("PROGRAMA");
-                        //var cod = lista.Name.Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
-
-                        //file.Codigo = cod;
-                        Extension = lista.Extension,
-                        Name = lista.Name,
-                        NameShow = lista.Name.Replace(".txt", string.Empty),
-                        Length = lista.Length.ToString(),
-                        CreationTimeUtc = lista.LastWriteTime.ToString()
-                    };
-                    listaFileModel.Add(file);
-                }
-
-                fileModel = listaFileModel.FirstOrDefault();
-                rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
-
-                //listaFileModel.Sort((x, y) => x.Codigo.CompareTo(y.Codigo));
-
-                //if (!String.IsNullOrEmpty(fileName))
-                //{
-                //    fileModel = listaFileModel.Where(w => w.Name.Contains(fileName)).FirstOrDefault();
-                //    rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
-                //}
-                //else
-                //{
-                //    DateTime fechaHoy = DateTime.Today;
-                //    var diaHoy = getDia(fechaHoy);
-                //    var mesHoy = getMes(fechaHoy);
-
-                //    var mydia = DateTime.Today.Day.ToString().PadLeft(2, '0');
-
-                //    var cad = diaHoy + " " + mydia + " DE " + mesHoy;
-
-                //    fileModel = listaFileModel.Where(w => w.Name.Contains(cad)).FirstOrDefault();
-                //    if (fileModel.Name == null)
-                //        fileModel = listaFileModel.FirstOrDefault();
-
-                //    rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
-                //}
-
-                //rutaCompleta = System.IO.Path.Combine(pathCarpeta, fileModel.Name);
-
-                List<string> lstFinal = FormateaDataSSIS(rutaCompleta);
-
-                DataTable dt = FormateaDataFinalSSIS(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
-                listaFinal = CargarListaFinal(dt);
-
-            }
-
-            listaFinal.ListaCabeceras = listaCabeceras;
-            listaFinal.ListaTorneos = listaTorneos;
-            listaFinal.ListaCabecerasFav = listaCabecerasFav;
-            listaFinal.ListaCabecerasMin = listaCabecerasMin;
-            listaFinal.ListaFiles = listaFileModel;
-            listaFinal.Archivo = fileModel;
-                       
-
-            return listaFinal;
+            return dtSSIS;
         }
 
         private List<string> FormateaDataSSIS(string rutaCompleta)
@@ -1921,15 +1864,11 @@ namespace TuCalcuTeApuesto.Controllers
             return line;
         }
 
-        private DataTable FormateaDataFinalSSIS(List<string> lstFinal, ref List<CabeceraModel> listaCabeceras, ref List<TorneoModel> listaTorneos, ref List<int> listaCabecerasFav, ref List<int> listaCabecerasMin)
+        private DataTable FormateaDataFinalSSIS(List<string> lstFinal)
         {
             char[] x = { ' ' }; // delimitador
 
             DataTable dt = CargarTablaSSIS();
-
-            listaCabeceras = CargarCabeceras(dt);
-            listaCabecerasFav = CargarCabecerasVisiblesFav(dt);
-            listaCabecerasMin = CargarCabecerasVisiblesMin(dt);
 
             for (int i = 0; i < lstFinal.Count; i++)
             {
@@ -1957,20 +1896,6 @@ namespace TuCalcuTeApuesto.Controllers
                 dt.Rows[k]["FECHA"] = fechaProg;
                 dt.Rows[k]["FLAG"] = ObtenerUrlImagen(torneo);
 
-            }
-
-            listaTorneos = CargarTorneos(dt);
-
-            for (int i = 0; i < listaCabecerasFav.Count; i++)
-            {
-                var Index = listaCabecerasFav[i].ToString();
-                listaCabeceras[Convert.ToInt32(Index)].IsChecked = false;
-            }
-
-            for (int i = 0; i < listaCabecerasMin.Count; i++)
-            {
-                var Index = listaCabecerasMin[i].ToString();
-                listaCabeceras[Convert.ToInt32(Index)].IsChecked = false;
             }
 
             return dt;
@@ -2003,6 +1928,7 @@ namespace TuCalcuTeApuesto.Controllers
             else if (nombreMes == "DICIEMBRE") ret = "12";
             return ret;
         }
+
         private DataTable CargarTablaSSIS()
         {
             DataTable dt = new DataTable();
@@ -2053,7 +1979,7 @@ namespace TuCalcuTeApuesto.Controllers
             return dt;
         }
 
-        
+
         #endregion
 
     }
