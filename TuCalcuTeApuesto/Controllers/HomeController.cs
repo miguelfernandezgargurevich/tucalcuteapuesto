@@ -12,6 +12,7 @@ using System.Net.Mail;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using System.Text;
+using System.Configuration;
 
 namespace TuCalcuTeApuesto.Controllers
 {
@@ -20,13 +21,11 @@ namespace TuCalcuTeApuesto.Controllers
         public ActionResult Index(string f)
 
         {
-            ListaModel listaFinal = new ListaModel();
-            string pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
+            
+            CrearArchivos();
 
-            ActualizaArchivos(pathCarpeta);
-
-            listaFinal = CargaDataModelo(pathCarpeta, f);
-
+            ListaModel listaFinal = CargaDataModelo(f);
+            
             return View(listaFinal);
         }
 
@@ -109,10 +108,11 @@ namespace TuCalcuTeApuesto.Controllers
         }
 
         #region "Metodos"
-        public void ActualizaArchivos(string pathCarpeta)
+
+        public void CrearArchivos()
         {
-            string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
-            
+            string path = ConfigurationManager.AppSettings["urlArchivo"]; //"https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
+            string pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
 
             System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(pathCarpeta);
             List<FileInfo> listaFileInfo = directory.GetFiles().ToList();
@@ -123,7 +123,7 @@ namespace TuCalcuTeApuesto.Controllers
             var mydia = DateTime.Today.Day.ToString().PadLeft(2, '0');
             var cad = diaHoy + " " + mydia + " DE " + mesHoy;
 
-            //si no hya archivo de hoy crea
+            //si no hay archivo de hoy crea
             var fileModel = listaFileInfo.Where(w => w.Name.Contains(cad)).FirstOrDefault();
             if (fileModel == null)
             {
@@ -131,23 +131,24 @@ namespace TuCalcuTeApuesto.Controllers
             }
             else
             {
-                //la fecha de creacion es menor a hoy actualiza
-                //fileModel = listaFileInfo.FirstOrDefault();
+                //ultima modificacion es menor a hoy actualiza           
                 var pathFile = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileModel.Name);
-
                 var strLastModified = Convert.ToDateTime(System.IO.File.GetLastWriteTime(pathFile).ToShortDateString());
                 var fechaCreacionFile = Convert.ToDateTime(fileModel.CreationTime.ToShortDateString());
                 var fechaHoyCadena = Convert.ToDateTime(fechaHoy.ToShortDateString());
                 var diasDiff = (fechaHoyCadena - strLastModified).Days;
+
                 if (diasDiff > 0)
                 {
                     ExtractTextFromPdf(path);
                 }
+                //ExtractTextFromPdf(path);
             }
         }
 
-        public ListaModel CargaDataModelo(string pathCarpeta, string fileName = "")
+        public ListaModel CargaDataModelo(string fileName = "")
         {
+            string pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
             ListaModel listaFinal = new ListaModel();
             listaFinal.Lista = new List<ModeloModel>();
 
@@ -167,7 +168,6 @@ namespace TuCalcuTeApuesto.Controllers
             {
                 foreach (FileInfo lista in listaFileInfo)
                 {
-
                     FileModel file = new FileModel();
                     var index = lista.Name.ToUpper().IndexOf("PROGRAMA");
                     var cod = lista.Name.Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
@@ -577,8 +577,8 @@ namespace TuCalcuTeApuesto.Controllers
             }
             lstHideColumnasLoad.Remove(0);
             lstHideColumnasLoad.Remove(1);
-            lstHideColumnasLoad.Remove(2);
-            lstHideColumnasLoad.Remove(3);
+            //lstHideColumnasLoad.Remove(2); //cod
+            //lstHideColumnasLoad.Remove(3);//min
             lstHideColumnasLoad.Remove(4);
             lstHideColumnasLoad.Remove(5);
             lstHideColumnasLoad.Remove(6);
@@ -605,15 +605,15 @@ namespace TuCalcuTeApuesto.Controllers
             {
                 lstHideColumnasLoad.Add(i);
             }
-            lstHideColumnasLoad.Remove(0);
-            lstHideColumnasLoad.Remove(1);
-            //lstHideColumnasLoad.Remove(2);
-            lstHideColumnasLoad.Remove(3);
-            lstHideColumnasLoad.Remove(4);
-            lstHideColumnasLoad.Remove(5);
-            lstHideColumnasLoad.Remove(6);
-            lstHideColumnasLoad.Remove(7);
-            lstHideColumnasLoad.Remove(8);
+            lstHideColumnasLoad.Remove(0); //torneo
+            lstHideColumnasLoad.Remove(1); //hora
+            //lstHideColumnasLoad.Remove(2); //cod
+            //lstHideColumnasLoad.Remove(3); //min
+            lstHideColumnasLoad.Remove(4); //local
+            lstHideColumnasLoad.Remove(5); //L
+            lstHideColumnasLoad.Remove(6); //E
+            lstHideColumnasLoad.Remove(7); //V
+            lstHideColumnasLoad.Remove(8); //visita
             //lstHideColumnasLoad.Remove(18);
             //lstHideColumnasLoad.Remove(19);
             //lstHideColumnasLoad.Remove(25);
@@ -1091,7 +1091,6 @@ namespace TuCalcuTeApuesto.Controllers
 
         public void ExtractTextFromPdf(string path)
         {
-            bool ret = true;
             var newFileNameOriginal = String.Concat("TA-ED-Regular-Inicial", ".txt");
             var filepath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", newFileNameOriginal);
 
@@ -1173,16 +1172,13 @@ namespace TuCalcuTeApuesto.Controllers
 
                                 row["Codigo"] = codigo;
                                 row["Nombre"] = line;
-                                row["Descripcion"] = nombreProg.Replace(" ", "|");
-                                row["Fecha"] = EvalFechaPrograma(fechaProg);
+                                row["Descripcion"] = nombreProg.Replace(" ", "|").Replace("Á","A").Replace("É", "E").Replace("Í", "I").Replace("Ó", "O").Replace("Ú", "U");
+                                row["Fecha"] = GetFechaPrograma(fechaProg);
                                 listaFinal.Rows.Add(row);
-
-                               
-
                             }
-
                         }
                     }
+
                     fileClean.Close();
 
                     string addResultSSIS = string.Empty;
@@ -1215,7 +1211,7 @@ namespace TuCalcuTeApuesto.Controllers
                     }
 
                     //PARA SSIS
-                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular_SSIS", ".txt");
+                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS", ".txt");
                     var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
 
                     using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
@@ -1224,20 +1220,16 @@ namespace TuCalcuTeApuesto.Controllers
                         fs.Write(bytes, 0, bytes.Length);
                         fs.Close();
                     }
-                    
-                    //CargaDataModeloSSIS
-                    var pathCarpetaSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS");
-                    var dtFinalSSIS = CargaDataModeloSSIS(fileUnicoPathSSIS);
 
+                    //crea txt formateado para SSIS
+                    DataTable dtSSIS = CargaDataModeloSSIS();
                 }
             }
             catch (Exception e)
             {
                 ViewBag.ErrorMessage = e.Message.ToString();
-                ret = false;
+                //ret = false;
             }
-            
-
         }
 
         public bool ValidaTextoEnLinea(string texto)
@@ -1296,74 +1288,13 @@ namespace TuCalcuTeApuesto.Controllers
             return ret;
         }
 
-        public void ExtractTextFromPdfStrategy(string path, string nombrePrograma)
-        {
-            int nroPrograma = 0;
-            //string nombrePrograma = string.Empty;
-
-            ITextExtractionStrategy its = new iTextSharp.text.pdf.parser.LocationTextExtractionStrategy();
-
-            using (PdfReader reader = new PdfReader(path))
-            {
-                StringBuilder text = new StringBuilder();
-
-
-                for (int i = 1; i <= reader.NumberOfPages; i++)
-                {
-                    string thePage = PdfTextExtractor.GetTextFromPage(reader, i, its);
-                    string[] theLines = thePage.Split('\n');
-                    foreach (var theLine in theLines)
-                    {
-                        bool isValidLine = ValidaTextoEnLinea(theLine);
-                        if (isValidLine)
-                        {
-
-
-                            //if (theLine.Contains("PROGRAMA") && theLine.Length < 50)
-                            if (theLine.Contains(nombrePrograma))
-                            {
-                                nroPrograma = nroPrograma + 1;
-                            }
-
-                            if (nroPrograma == 1)
-                            {
-                                if (!theLine.Contains("PROGRAMA"))
-                                {
-                                    text.AppendLine(theLine);
-                                }
-
-                            }
-
-
-                            else
-                            {
-                                break;
-                            }
-
-
-                        }
-
-                    }
-
-                    if (nroPrograma == 1)
-                    {
-                        var newFileNameOriginal = String.Concat(nombrePrograma, ".txt");
-                        var filepathOriginal = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", newFileNameOriginal);
-                        System.IO.File.WriteAllText(filepathOriginal, text.ToString());
-                    }
-
-                }
-
-
-            }
-        }
-
-        public List<string> getProgramasFromPdfStrategy(string path = "")
+        public List<string> ExtractProgramasFromPdfStrategy(string path = "")
         {
             List<string> listaProgramas = new List<string>();
             string nombrePrograma = string.Empty;
 
-            path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
+            //path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
+            path = ConfigurationManager.AppSettings["urlArchivo"];
 
             ITextExtractionStrategy its = new iTextSharp.text.pdf.parser.LocationTextExtractionStrategy();
 
@@ -1399,182 +1330,52 @@ namespace TuCalcuTeApuesto.Controllers
 
         #region "SSIS"
 
-        public void CreaArchivosSSIS()
+        public DataTable CargaDataModeloSSIS()
         {
-            string path = "https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
-            //var listaProgramas = GetProgramasFromPdfStrategy();
-            ExtractTextFromPdfSSIS(path);
+            List<string> lstFinalSSIS = FormateaDataSSIS();
+            DataTable dtFinalSSIS = FormateaDataFinalSSIS(lstFinalSSIS);
 
-        }
+            //PARA SSIS
+            var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS-Final", ".txt");
+            var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
 
-        public string ExtractTextFromPdfSSIS(string path)
-        {
-            string ret = "";
-            var newFileNameOriginal = String.Concat("TA-ED-Regular-Inicial", ".txt");
-            var filepath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", newFileNameOriginal);
+            var tab = "\t";
+            var saltolinea = "\n";
 
-            try
+            string addResultSSISCol = string.Empty;
+            foreach (DataColumn col in dtFinalSSIS.Columns)
             {
-                using (PdfReader reader = new PdfReader(path))
+                addResultSSISCol = addResultSSISCol + col.Caption + tab;
+            }
+            addResultSSISCol = addResultSSISCol + saltolinea;
+
+            string addResultSSIS = string.Empty;
+            foreach (DataRow row in dtFinalSSIS.Rows)
+            {
+                foreach (DataColumn col in dtFinalSSIS.Columns)
                 {
-                    StringBuilder text = new StringBuilder();
-
-                    for (int i = 1; i <= reader.NumberOfPages; i++)
-                    {
-                        text.Append(PdfTextExtractor.GetTextFromPage(reader, i));
-                    }
-
-                    System.IO.File.WriteAllText(filepath, text.ToString());
-
-                    //crear un nuevo file limpio
-                    List<string> listaProgramas = new List<string>();
-                    DataTable listaFinal = new DataTable();
-                    listaFinal.Columns.Add("Codigo");
-                    listaFinal.Columns.Add("Nombre");
-                    listaFinal.Columns.Add("Fecha");
-                    listaFinal.Columns.Add("Linea");
-
-                    string codigoProg = string.Empty;
-                    string nombreProg = string.Empty;
-                    string fechaProg = string.Empty;
-
-                    var newFileName = String.Concat("TA-ED-Regular", ".txt");
-                    var filepathNew = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", newFileName);
-
-                    string[] empty = new string[0];
-                    System.IO.File.WriteAllLines(filepathNew, empty);
-                    StreamWriter fileClean = new StreamWriter(filepathNew, append: true);
-
-                    string[] fileArray = System.IO.File.ReadAllLines(filepath);
-
-                    string nomProgramaInicial = string.Empty;
-                    string line = "";
-                    var lstFinal = new List<string>();
-                    for (int i = 0; i < fileArray.Length; i++)
-                    {
-                        DataRow row = listaFinal.NewRow();
-
-                        line = fileArray[i].ToString();
-                        if (ValidaTextoEnLinea(line) == true)
-                        {
-                            if (line.Contains("NUEVAS APUESTAS"))
-                                break;
-
-                            if (line.Contains("PROGRAMA"))
-                            {
-                                if (nomProgramaInicial != line)
-                                {
-                                    fileClean.WriteLine(line);
-
-                                    nomProgramaInicial = line;
-                                    listaProgramas.Add(line);
-
-                                    var index = line.ToString().ToUpper().IndexOf("PROGRAMA");
-                                    codigoProg = line.ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
-                                    nombreProg = line.ToString().Replace(".txt", string.Empty).Trim();
-                                    fechaProg = line.ToString().Split('-').GetValue(0).ToString().Trim();
-
-                                }
-                            }
-                            else
-                            {
-                                if (line.Contains("V-"))
-                                    line = line.Replace("V-", "V ");
-
-                                if (line.Contains("AL-"))
-                                    line = line.Replace("AL-", "AL ");
-
-                                if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
-                                    line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
-
-                                fileClean.WriteLine(line);
-
-                                row["Codigo"] = codigoProg;
-                                row["Nombre"] = nombreProg.Replace(" ", "|");
-                                row["Fecha"] = EvalFechaPrograma(fechaProg);
-                                row["Linea"] = line;
-                                listaFinal.Rows.Add(row);
-                            }
-
-                        }
-                    }
-                    fileClean.Close();
-
-                    //string addResultSSIS = "PROGRAMA TORNEO HORA COD MIN LOCAL L E V VISITA LoE LoV EoV PTL PTE PTV STL STE STV LL EL VL LE EE VE LV EV VV MENOSUNO5 MASUNOCINCO MENOSDOSCINCO MASDOSCINCO MENOSTRESCINCO MASTRESCINCO CEROUNO DOSTRES CUATROMAS AMBOS NINGUNO IMPAR PAR" + "\n";
-                    string addResultSSIS = string.Empty;
-                    var fileUnicoName = string.Empty;
-                    for (int j = 0; j <= listaProgramas.Count - 1; j++)
-                    {
-
-                        var index = listaProgramas[j].ToString().ToUpper().IndexOf("PROGRAMA");
-                        codigoProg = listaProgramas[j].ToString().Substring(index).Replace("PROGRAMA", string.Empty).Replace(".txt", string.Empty).Trim();
-
-                        DataRow[] result = listaFinal.Select("Codigo = " + codigoProg);
-                        string addResult = string.Empty;
-                        foreach (DataRow row in result)
-                        {
-                            //addResult = addResult + row["Nombre"] + "\n";
-                            addResult = addResultSSIS + codigoProg + " " + row["Nombre"] + " " + row["Fecha"] + " " + row["Linea"] + "\n";
-                            addResultSSIS = addResultSSIS + codigoProg + " " + row["Nombre"] + " " + row["Fecha"] + " " + row["Linea"] + "\n";
-                        }
-
-                        //crear files unicos
-                        fileUnicoName = String.Concat(listaProgramas[j], ".txt");
-                        var fileUnicoPath = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileUnicoName);
-
-                        using (FileStream fs = new FileStream(fileUnicoPath, FileMode.Create))
-                        {
-                            byte[] bytes = Encoding.UTF8.GetBytes(addResult);
-                            fs.Write(bytes, 0, bytes.Length);
-                            fs.Close();
-                        }
-
-                    }
-
-                    //PARA SSIS
-                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular_SSIS", ".txt");
-                    var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
-
-                    using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
-                    {
-                        byte[] bytes = Encoding.UTF8.GetBytes(addResultSSIS);
-                        fs.Write(bytes, 0, bytes.Length);
-                        fs.Close();
-                    }
-
-                    ret = fileUnicoPathSSIS;
-
-
-                    var pathCarpetaFiles = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
-
-                    //CargaDataModeloSSIS
-                    var pathCarpetaSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS");
-                    var listaSSIS = CargaDataModeloSSIS(fileUnicoPathSSIS);
-
+                    addResultSSIS = addResultSSIS + row[col.ColumnName] + tab;
                 }
+                addResultSSIS = addResultSSIS + saltolinea;
             }
-            catch (Exception e)
+
+            var fileFinal = addResultSSISCol + addResultSSIS;
+            using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
             {
-                ViewBag.ErrorMessage = e.Message.ToString();
-                ret = "";
+                byte[] bytes = Encoding.UTF8.GetBytes(fileFinal);
+                fs.Write(bytes, 0, bytes.Length);
+                fs.Close();
             }
-            return ret;
 
+            return dtFinalSSIS;
         }
 
-        public DataTable CargaDataModeloSSIS(string rutaCompletaSSIS)
+        private List<string> FormateaDataSSIS()
         {
+            var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS", ".txt");
+            var pathCarpetaSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS");
+            var rutaCompleta = System.IO.Path.Combine(pathCarpetaSSIS, fileUnicoNameSSIS);
 
-            List<string> lstFinalSSIS = FormateaDataSSIS(rutaCompletaSSIS);
-
-            DataTable dtSSIS = FormateaDataFinalSSIS(lstFinalSSIS);
-            
-
-            return dtSSIS;
-        }
-
-        private List<string> FormateaDataSSIS(string rutaCompleta)
-        {
             List<string> lstFinal = new List<string>();
             if (!String.IsNullOrEmpty(rutaCompleta))
             {
@@ -1901,7 +1702,7 @@ namespace TuCalcuTeApuesto.Controllers
             return dt;
         }
 
-        private string EvalFechaPrograma(string fechaProg)
+        private string GetFechaPrograma(string fechaProg)
         {
             string ret = string.Empty;
             var array = fechaProg.Split(' ');
@@ -1978,7 +1779,6 @@ namespace TuCalcuTeApuesto.Controllers
             dt.Columns.Add("FLAG");
             return dt;
         }
-
 
         #endregion
 
