@@ -111,7 +111,7 @@ namespace TuCalcuTeApuesto.Controllers
 
         public void CrearArchivos()
         {
-            string path = ConfigurationManager.AppSettings["urlArchivo"]; //"https://www.intralot.com.pe/intralot/docs/teapuesto/edicion_regular/TA-ED-Regular.pdf";
+            string path = ConfigurationManager.AppSettings["urlArchivo"];
             string pathCarpeta = System.IO.Path.Combine(Server.MapPath("~/"), "Files");
 
             System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(pathCarpeta);
@@ -142,6 +142,8 @@ namespace TuCalcuTeApuesto.Controllers
                 {
                     ExtractTextFromPdf(path);
                 }
+                
+                ////crea files
                 //ExtractTextFromPdf(path);
             }
         }
