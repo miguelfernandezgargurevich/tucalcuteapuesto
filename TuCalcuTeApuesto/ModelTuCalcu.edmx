@@ -1,0 +1,1028 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="dbTuCalcuModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errores durante la generación:
+advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene definida ninguna clave principal. Se ha inferido la clave y la definición se creado como una vista o tabla de solo lectura.-->
+        <EntityType Name="__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+            <PropertyRef Name="Model" />
+            <PropertyRef Name="ProductVersion" />
+          </Key>
+          <Property Name="MigrationId" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContextKey" Type="nvarchar" MaxLength="300" Nullable="false" />
+          <Property Name="Model" Type="varbinary(max)" Nullable="false" />
+          <Property Name="ProductVersion" Type="nvarchar" MaxLength="32" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ClaimType" Type="nvarchar(max)" />
+          <Property Name="ClaimValue" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogins">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="ProviderKey" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUserRoles">
+          <Key>
+            <PropertyRef Name="UserId" />
+            <PropertyRef Name="RoleId" />
+          </Key>
+          <Property Name="UserId" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="RoleId" Type="nvarchar" MaxLength="128" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="256" />
+          <Property Name="EmailConfirmed" Type="bit" Nullable="false" />
+          <Property Name="PasswordHash" Type="nvarchar(max)" />
+          <Property Name="SecurityStamp" Type="nvarchar(max)" />
+          <Property Name="PhoneNumber" Type="nvarchar(max)" />
+          <Property Name="PhoneNumberConfirmed" Type="bit" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="bit" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="datetime" />
+          <Property Name="LockoutEnabled" Type="bit" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="int" Nullable="false" />
+          <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Equipos">
+          <Key>
+            <PropertyRef Name="CodEquipo" />
+          </Key>
+          <Property Name="CodEquipo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesEquipo" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="EquiposFavoritos">
+          <Key>
+            <PropertyRef Name="CodEquipoFavorito" />
+          </Key>
+          <Property Name="CodEquipoFavorito" Type="int" Nullable="false" />
+          <Property Name="CodUsuario" Type="int" />
+          <Property Name="CodEquipo" Type="int" />
+        </EntityType>
+        <EntityType Name="Programas">
+          <Key>
+            <PropertyRef Name="CodPrograma" />
+          </Key>
+          <Property Name="CodPrograma" Type="int" Nullable="false" />
+          <Property Name="DesPrograma" Type="nvarchar" MaxLength="500" />
+          <Property Name="Fecha" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ProgramasDetalle">
+          <Key>
+            <PropertyRef Name="CodProgramaDetalle" />
+          </Key>
+          <Property Name="CodProgramaDetalle" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodPrograma" Type="int" />
+          <Property Name="DesPrograma" Type="nvarchar" MaxLength="1000" />
+          <Property Name="NombreCortoTorneo" Type="nvarchar" MaxLength="500" />
+          <Property Name="CodigoIntralot" Type="nvarchar" MaxLength="50" />
+          <Property Name="Minimo" Type="nvarchar" MaxLength="50" />
+          <Property Name="DesEquipoLocal" Type="nvarchar" MaxLength="500" />
+          <Property Name="DesEquipoVisita" Type="nvarchar" MaxLength="500" />
+          <Property Name="L" Type="nvarchar" MaxLength="100" />
+          <Property Name="E" Type="nvarchar" MaxLength="100" />
+          <Property Name="V" Type="nvarchar" MaxLength="100" />
+          <Property Name="LoE" Type="nvarchar" MaxLength="100" />
+          <Property Name="LoV" Type="nvarchar" MaxLength="100" />
+          <Property Name="EoV" Type="nvarchar" MaxLength="100" />
+          <Property Name="PTL" Type="nvarchar" MaxLength="100" />
+          <Property Name="PTE" Type="nvarchar" MaxLength="100" />
+          <Property Name="PTV" Type="nvarchar" MaxLength="100" />
+          <Property Name="STL" Type="nvarchar" MaxLength="100" />
+          <Property Name="STE" Type="nvarchar" MaxLength="100" />
+          <Property Name="STV" Type="nvarchar" MaxLength="100" />
+          <Property Name="LL" Type="nvarchar" MaxLength="100" />
+          <Property Name="EL" Type="nvarchar" MaxLength="100" />
+          <Property Name="VL" Type="nvarchar" MaxLength="100" />
+          <Property Name="LE" Type="nvarchar" MaxLength="100" />
+          <Property Name="EE" Type="nvarchar" MaxLength="100" />
+          <Property Name="VE" Type="nvarchar" MaxLength="100" />
+          <Property Name="LV" Type="nvarchar" MaxLength="100" />
+          <Property Name="EV" Type="nvarchar" MaxLength="100" />
+          <Property Name="VV" Type="nvarchar" MaxLength="100" />
+          <Property Name="MENOSUNOCINCO" Type="nvarchar" MaxLength="100" />
+          <Property Name="MASUNOCINCO" Type="nvarchar" MaxLength="100" />
+          <Property Name="MENOSDOSCINCO" Type="nvarchar" MaxLength="100" />
+          <Property Name="MASDOSCINCO" Type="nvarchar" MaxLength="100" />
+          <Property Name="MENOSTRESCINCO" Type="nvarchar" MaxLength="100" />
+          <Property Name="MASTRESCINCO" Type="nvarchar" MaxLength="100" />
+          <Property Name="CEROUNO" Type="nvarchar" MaxLength="100" />
+          <Property Name="DOSTRES" Type="nvarchar" MaxLength="100" />
+          <Property Name="CUATROMAS" Type="nvarchar" MaxLength="100" />
+          <Property Name="AMBOS" Type="nvarchar" MaxLength="100" />
+          <Property Name="NINGUNO" Type="nvarchar" MaxLength="100" />
+          <Property Name="IMPAR" Type="nvarchar" MaxLength="100" />
+          <Property Name="PAR" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Torneos">
+          <Key>
+            <PropertyRef Name="CodTorneo" />
+          </Key>
+          <Property Name="CodTorneo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DesTorneo" Type="nvarchar" MaxLength="1000" />
+          <Property Name="NombreCorto" Type="nchar" MaxLength="50" />
+          <Property Name="Flag" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="TorneosFavoritos">
+          <Key>
+            <PropertyRef Name="CodTorneoFavorito" />
+          </Key>
+          <Property Name="CodTorneoFavorito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodUsuario" Type="int" />
+          <Property Name="CodTorneo" Type="int" />
+        </EntityType>
+        <EntityType Name="Usuarios">
+          <Key>
+            <PropertyRef Name="CodUsuario" />
+          </Key>
+          <Property Name="CodUsuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Nombres" Type="nvarchar" MaxLength="200" />
+          <Property Name="ApePaterno" Type="nvarchar" MaxLength="200" />
+          <Property Name="ApeMaterno" Type="nvarchar" MaxLength="200" />
+          <Property Name="Correo" Type="nvarchar" MaxLength="500" />
+          <Property Name="Telefono" Type="nvarchar" MaxLength="100" />
+          <Property Name="Password" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="UsuariosJugadas">
+          <Key>
+            <PropertyRef Name="CodPrograma" />
+            <PropertyRef Name="CodUsuario" />
+            <PropertyRef Name="CodProgramaDetalle" />
+          </Key>
+          <Property Name="CodPrograma" Type="int" Nullable="false" />
+          <Property Name="CodUsuario" Type="int" Nullable="false" />
+          <Property Name="CodProgramaDetalle" Type="int" Nullable="false" />
+          <Property Name="DesJugada" Type="nvarchar" MaxLength="100" />
+          <Property Name="Cuota" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserClaims" Type="Self.AspNetUserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserLogins" Type="Self.AspNetUserLogins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+          <End Role="AspNetRoles" Type="Self.AspNetRoles" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetRoles">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserRoles">
+              <PropertyRef Name="RoleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="AspNetUserRoles" Type="Self.AspNetUserRoles" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserRoles">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EquiposFavoritos_Equipos">
+          <End Role="Equipos" Type="Self.Equipos" Multiplicity="0..1" />
+          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipos">
+              <PropertyRef Name="CodEquipo" />
+            </Principal>
+            <Dependent Role="EquiposFavoritos">
+              <PropertyRef Name="CodEquipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EquiposFavoritos_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="CodUsuario" />
+            </Principal>
+            <Dependent Role="EquiposFavoritos">
+              <PropertyRef Name="CodUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProgramaDetalle_Programa">
+          <End Role="Programas" Type="Self.Programas" Multiplicity="0..1" />
+          <End Role="ProgramasDetalle" Type="Self.ProgramasDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Programas">
+              <PropertyRef Name="CodPrograma" />
+            </Principal>
+            <Dependent Role="ProgramasDetalle">
+              <PropertyRef Name="CodPrograma" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TorneosFavoritos_Torneos">
+          <End Role="Torneos" Type="Self.Torneos" Multiplicity="0..1" />
+          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneos">
+              <PropertyRef Name="CodTorneo" />
+            </Principal>
+            <Dependent Role="TorneosFavoritos">
+              <PropertyRef Name="CodTorneo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TorneosFavoritos_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="CodUsuario" />
+            </Principal>
+            <Dependent Role="TorneosFavoritos">
+              <PropertyRef Name="CodUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsuarioJugada_Programa">
+          <End Role="Programas" Type="Self.Programas" Multiplicity="1" />
+          <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Programas">
+              <PropertyRef Name="CodPrograma" />
+            </Principal>
+            <Dependent Role="UsuariosJugadas">
+              <PropertyRef Name="CodPrograma" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsuarioJugada_ProgramaDetalle">
+          <End Role="ProgramasDetalle" Type="Self.ProgramasDetalle" Multiplicity="1" />
+          <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProgramasDetalle">
+              <PropertyRef Name="CodProgramaDetalle" />
+            </Principal>
+            <Dependent Role="UsuariosJugadas">
+              <PropertyRef Name="CodProgramaDetalle" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsuarioJugada_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="CodUsuario" />
+            </Principal>
+            <Dependent Role="UsuariosJugadas">
+              <PropertyRef Name="CodUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbTuCalcuModelStoreContainer">
+          <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Equipos" EntityType="Self.Equipos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EquiposFavoritos" EntityType="Self.EquiposFavoritos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Programas" EntityType="Self.Programas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ProgramasDetalle" EntityType="Self.ProgramasDetalle" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Torneos" EntityType="Self.Torneos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TorneosFavoritos" EntityType="Self.TorneosFavoritos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UsuariosJugadas" EntityType="Self.UsuariosJugadas" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="__MigrationHistory" EntityType="Self.__MigrationHistory" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [__MigrationHistory].[MigrationId] AS [MigrationId], 
+    [__MigrationHistory].[ContextKey] AS [ContextKey], 
+    [__MigrationHistory].[Model] AS [Model], 
+    [__MigrationHistory].[ProductVersion] AS [ProductVersion]
+    FROM [dbo].[__MigrationHistory] AS [__MigrationHistory]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetRoles_RoleId">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserRoles_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EquiposFavoritos_Equipos" Association="Self.FK_EquiposFavoritos_Equipos">
+            <End Role="Equipos" EntitySet="Equipos" />
+            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EquiposFavoritos_Usuarios" Association="Self.FK_EquiposFavoritos_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProgramaDetalle_Programa" Association="Self.FK_ProgramaDetalle_Programa">
+            <End Role="Programas" EntitySet="Programas" />
+            <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TorneosFavoritos_Torneos" Association="Self.FK_TorneosFavoritos_Torneos">
+            <End Role="Torneos" EntitySet="Torneos" />
+            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TorneosFavoritos_Usuarios" Association="Self.FK_TorneosFavoritos_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsuarioJugada_Programa" Association="Self.FK_UsuarioJugada_Programa">
+            <End Role="Programas" EntitySet="Programas" />
+            <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsuarioJugada_ProgramaDetalle" Association="Self.FK_UsuarioJugada_ProgramaDetalle">
+            <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
+            <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsuarioJugada_Usuarios" Association="Self.FK_UsuarioJugada_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="dbTuCalcuModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Equipos">
+          <Key>
+            <PropertyRef Name="CodEquipo" />
+          </Key>
+          <Property Name="CodEquipo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesEquipo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EquiposFavoritos" Relationship="Self.FK_EquiposFavoritos_Equipos" FromRole="Equipos" ToRole="EquiposFavoritos" />
+        </EntityType>
+        <EntityType Name="EquiposFavoritos">
+          <Key>
+            <PropertyRef Name="CodEquipoFavorito" />
+          </Key>
+          <Property Name="CodEquipoFavorito" Type="Int32" Nullable="false" />
+          <Property Name="CodUsuario" Type="Int32" />
+          <Property Name="CodEquipo" Type="Int32" />
+          <NavigationProperty Name="Equipos" Relationship="Self.FK_EquiposFavoritos_Equipos" FromRole="EquiposFavoritos" ToRole="Equipos" />
+          <NavigationProperty Name="Usuarios" Relationship="Self.FK_EquiposFavoritos_Usuarios" FromRole="EquiposFavoritos" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="Programas">
+          <Key>
+            <PropertyRef Name="CodPrograma" />
+          </Key>
+          <Property Name="CodPrograma" Type="Int32" Nullable="false" />
+          <Property Name="DesPrograma" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="ProgramasDetalle" Relationship="Self.FK_ProgramaDetalle_Programa" FromRole="Programas" ToRole="ProgramasDetalle" />
+          <NavigationProperty Name="UsuariosJugadas" Relationship="Self.FK_UsuarioJugada_Programa" FromRole="Programas" ToRole="UsuariosJugadas" />
+        </EntityType>
+        <EntityType Name="ProgramasDetalle">
+          <Key>
+            <PropertyRef Name="CodProgramaDetalle" />
+          </Key>
+          <Property Name="CodProgramaDetalle" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodPrograma" Type="Int32" />
+          <Property Name="DesPrograma" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="NombreCortoTorneo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="CodigoIntralot" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Minimo" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="DesEquipoLocal" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="DesEquipoVisita" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="L" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="E" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="V" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LoE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LoV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EoV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PTL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PTE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PTV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="STL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="STE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="STV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="VL" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="VE" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="LV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="EV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="VV" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MENOSUNOCINCO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MASUNOCINCO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MENOSDOSCINCO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MASDOSCINCO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MENOSTRESCINCO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MASTRESCINCO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CEROUNO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DOSTRES" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="CUATROMAS" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="AMBOS" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="NINGUNO" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="IMPAR" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PAR" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Programas" Relationship="Self.FK_ProgramaDetalle_Programa" FromRole="ProgramasDetalle" ToRole="Programas" />
+          <NavigationProperty Name="UsuariosJugadas" Relationship="Self.FK_UsuarioJugada_ProgramaDetalle" FromRole="ProgramasDetalle" ToRole="UsuariosJugadas" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="Torneos">
+          <Key>
+            <PropertyRef Name="CodTorneo" />
+          </Key>
+          <Property Name="CodTorneo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DesTorneo" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="NombreCorto" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Name="Flag" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TorneosFavoritos" Relationship="Self.FK_TorneosFavoritos_Torneos" FromRole="Torneos" ToRole="TorneosFavoritos" />
+        </EntityType>
+        <EntityType Name="TorneosFavoritos">
+          <Key>
+            <PropertyRef Name="CodTorneoFavorito" />
+          </Key>
+          <Property Name="CodTorneoFavorito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodUsuario" Type="Int32" />
+          <Property Name="CodTorneo" Type="Int32" />
+          <NavigationProperty Name="Torneos" Relationship="Self.FK_TorneosFavoritos_Torneos" FromRole="TorneosFavoritos" ToRole="Torneos" />
+          <NavigationProperty Name="Usuarios" Relationship="Self.FK_TorneosFavoritos_Usuarios" FromRole="TorneosFavoritos" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="Usuarios">
+          <Key>
+            <PropertyRef Name="CodUsuario" />
+          </Key>
+          <Property Name="CodUsuario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Nombres" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ApePaterno" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="ApeMaterno" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="Correo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Telefono" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="EquiposFavoritos" Relationship="Self.FK_EquiposFavoritos_Usuarios" FromRole="Usuarios" ToRole="EquiposFavoritos" />
+          <NavigationProperty Name="TorneosFavoritos" Relationship="Self.FK_TorneosFavoritos_Usuarios" FromRole="Usuarios" ToRole="TorneosFavoritos" />
+          <NavigationProperty Name="UsuariosJugadas" Relationship="Self.FK_UsuarioJugada_Usuarios" FromRole="Usuarios" ToRole="UsuariosJugadas" />
+        </EntityType>
+        <EntityType Name="UsuariosJugadas">
+          <Key>
+            <PropertyRef Name="CodPrograma" />
+            <PropertyRef Name="CodUsuario" />
+            <PropertyRef Name="CodProgramaDetalle" />
+          </Key>
+          <Property Name="CodPrograma" Type="Int32" Nullable="false" />
+          <Property Name="CodUsuario" Type="Int32" Nullable="false" />
+          <Property Name="CodProgramaDetalle" Type="Int32" Nullable="false" />
+          <Property Name="DesJugada" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Cuota" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Programas" Relationship="Self.FK_UsuarioJugada_Programa" FromRole="UsuariosJugadas" ToRole="Programas" />
+          <NavigationProperty Name="ProgramasDetalle" Relationship="Self.FK_UsuarioJugada_ProgramaDetalle" FromRole="UsuariosJugadas" ToRole="ProgramasDetalle" />
+          <NavigationProperty Name="Usuarios" Relationship="Self.FK_UsuarioJugada_Usuarios" FromRole="UsuariosJugadas" ToRole="Usuarios" />
+        </EntityType>
+        <Association Name="FK_EquiposFavoritos_Equipos">
+          <End Role="Equipos" Type="Self.Equipos" Multiplicity="0..1" />
+          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipos">
+              <PropertyRef Name="CodEquipo" />
+            </Principal>
+            <Dependent Role="EquiposFavoritos">
+              <PropertyRef Name="CodEquipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EquiposFavoritos_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="CodUsuario" />
+            </Principal>
+            <Dependent Role="EquiposFavoritos">
+              <PropertyRef Name="CodUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ProgramaDetalle_Programa">
+          <End Role="Programas" Type="Self.Programas" Multiplicity="0..1" />
+          <End Role="ProgramasDetalle" Type="Self.ProgramasDetalle" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Programas">
+              <PropertyRef Name="CodPrograma" />
+            </Principal>
+            <Dependent Role="ProgramasDetalle">
+              <PropertyRef Name="CodPrograma" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsuarioJugada_Programa">
+          <End Role="Programas" Type="Self.Programas" Multiplicity="1" />
+          <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Programas">
+              <PropertyRef Name="CodPrograma" />
+            </Principal>
+            <Dependent Role="UsuariosJugadas">
+              <PropertyRef Name="CodPrograma" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsuarioJugada_ProgramaDetalle">
+          <End Role="ProgramasDetalle" Type="Self.ProgramasDetalle" Multiplicity="1" />
+          <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProgramasDetalle">
+              <PropertyRef Name="CodProgramaDetalle" />
+            </Principal>
+            <Dependent Role="UsuariosJugadas">
+              <PropertyRef Name="CodProgramaDetalle" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TorneosFavoritos_Torneos">
+          <End Role="Torneos" Type="Self.Torneos" Multiplicity="0..1" />
+          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneos">
+              <PropertyRef Name="CodTorneo" />
+            </Principal>
+            <Dependent Role="TorneosFavoritos">
+              <PropertyRef Name="CodTorneo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TorneosFavoritos_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
+          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="CodUsuario" />
+            </Principal>
+            <Dependent Role="TorneosFavoritos">
+              <PropertyRef Name="CodUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UsuarioJugada_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="CodUsuario" />
+            </Principal>
+            <Dependent Role="UsuariosJugadas">
+              <PropertyRef Name="CodUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="dbTuCalcuEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Equipos" EntityType="Self.Equipos" />
+          <EntitySet Name="EquiposFavoritos" EntityType="Self.EquiposFavoritos" />
+          <EntitySet Name="Programas" EntityType="Self.Programas" />
+          <EntitySet Name="ProgramasDetalle" EntityType="Self.ProgramasDetalle" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+          <EntitySet Name="Torneos" EntityType="Self.Torneos" />
+          <EntitySet Name="TorneosFavoritos" EntityType="Self.TorneosFavoritos" />
+          <EntitySet Name="Usuarios" EntityType="Self.Usuarios" />
+          <EntitySet Name="UsuariosJugadas" EntityType="Self.UsuariosJugadas" />
+          <AssociationSet Name="FK_EquiposFavoritos_Equipos" Association="Self.FK_EquiposFavoritos_Equipos">
+            <End Role="Equipos" EntitySet="Equipos" />
+            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EquiposFavoritos_Usuarios" Association="Self.FK_EquiposFavoritos_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ProgramaDetalle_Programa" Association="Self.FK_ProgramaDetalle_Programa">
+            <End Role="Programas" EntitySet="Programas" />
+            <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsuarioJugada_Programa" Association="Self.FK_UsuarioJugada_Programa">
+            <End Role="Programas" EntitySet="Programas" />
+            <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsuarioJugada_ProgramaDetalle" Association="Self.FK_UsuarioJugada_ProgramaDetalle">
+            <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
+            <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TorneosFavoritos_Torneos" Association="Self.FK_TorneosFavoritos_Torneos">
+            <End Role="Torneos" EntitySet="Torneos" />
+            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TorneosFavoritos_Usuarios" Association="Self.FK_TorneosFavoritos_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UsuarioJugada_Usuarios" Association="Self.FK_UsuarioJugada_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
+          </AssociationSet>
+          <EntitySet Name="AspNetRoles" EntityType="dbTuCalcuModel.AspNetRoles" />
+          <EntitySet Name="AspNetUserClaims" EntityType="dbTuCalcuModel.AspNetUserClaims" />
+          <EntitySet Name="AspNetUserLogins" EntityType="dbTuCalcuModel.AspNetUserLogins" />
+          <EntitySet Name="AspNetUsers" EntityType="dbTuCalcuModel.AspNetUsers" />
+          <EntitySet Name="C__MigrationHistory" EntityType="dbTuCalcuModel.C__MigrationHistory" />
+          <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="dbTuCalcuModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
+          </AssociationSet>
+          <AssociationSet Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" Association="dbTuCalcuModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
+          </AssociationSet>
+          <AssociationSet Name="AspNetUserRoles" Association="dbTuCalcuModel.AspNetUserRoles">
+            <End Role="AspNetRoles" EntitySet="AspNetRoles" />
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="AspNetRoles">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="dbTuCalcuModel.AspNetUserRoles" FromRole="AspNetRoles" ToRole="AspNetUsers" />
+        </EntityType>
+        <EntityType Name="AspNetUserClaims">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClaimValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="dbTuCalcuModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUserClaims" ToRole="AspNetUsers" />
+        </EntityType>
+        <EntityType Name="AspNetUserLogins">
+          <Key>
+            <PropertyRef Name="LoginProvider" />
+            <PropertyRef Name="ProviderKey" />
+            <PropertyRef Name="UserId" />
+          </Key>
+          <Property Name="LoginProvider" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="ProviderKey" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUsers" Relationship="dbTuCalcuModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUserLogins" ToRole="AspNetUsers" />
+        </EntityType>
+        <EntityType Name="AspNetUsers">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="EmailConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="PasswordHash" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SecurityStamp" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PhoneNumberConfirmed" Type="Boolean" Nullable="false" />
+          <Property Name="TwoFactorEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="LockoutEndDateUtc" Type="DateTime" Precision="3" />
+          <Property Name="LockoutEnabled" Type="Boolean" Nullable="false" />
+          <Property Name="AccessFailedCount" Type="Int32" Nullable="false" />
+          <Property Name="UserName" Type="String" Nullable="false" MaxLength="256" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="AspNetUserClaims" Relationship="dbTuCalcuModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
+          <NavigationProperty Name="AspNetUserLogins" Relationship="dbTuCalcuModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
+          <NavigationProperty Name="AspNetRoles" Relationship="dbTuCalcuModel.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+        </EntityType>
+        <EntityType Name="C__MigrationHistory">
+          <Key>
+            <PropertyRef Name="MigrationId" />
+            <PropertyRef Name="ContextKey" />
+            <PropertyRef Name="Model" />
+            <PropertyRef Name="ProductVersion" />
+          </Key>
+          <Property Name="MigrationId" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContextKey" Type="String" Nullable="false" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="Model" Type="Binary" Nullable="false" MaxLength="Max" FixedLength="false" />
+          <Property Name="ProductVersion" Type="String" Nullable="false" MaxLength="32" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
+          <End Type="dbTuCalcuModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="dbTuCalcuModel.AspNetUserClaims" Role="AspNetUserClaims" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserClaims">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId">
+          <End Type="dbTuCalcuModel.AspNetUsers" Role="AspNetUsers" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="dbTuCalcuModel.AspNetUserLogins" Role="AspNetUserLogins" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="AspNetUserLogins">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AspNetUserRoles">
+          <End Type="dbTuCalcuModel.AspNetRoles" Role="AspNetRoles" Multiplicity="*" />
+          <End Type="dbTuCalcuModel.AspNetUsers" Role="AspNetUsers" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="dbTuCalcuModelStoreContainer" CdmEntityContainer="dbTuCalcuEntities">
+          <EntitySetMapping Name="Equipos">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.Equipos">
+              <MappingFragment StoreEntitySet="Equipos">
+                <ScalarProperty Name="CodEquipo" ColumnName="CodEquipo" />
+                <ScalarProperty Name="DesEquipo" ColumnName="DesEquipo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EquiposFavoritos">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.EquiposFavoritos">
+              <MappingFragment StoreEntitySet="EquiposFavoritos">
+                <ScalarProperty Name="CodEquipoFavorito" ColumnName="CodEquipoFavorito" />
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="CodEquipo" ColumnName="CodEquipo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Programas">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.Programas">
+              <MappingFragment StoreEntitySet="Programas">
+                <ScalarProperty Name="CodPrograma" ColumnName="CodPrograma" />
+                <ScalarProperty Name="DesPrograma" ColumnName="DesPrograma" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ProgramasDetalle">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.ProgramasDetalle">
+              <MappingFragment StoreEntitySet="ProgramasDetalle">
+                <ScalarProperty Name="CodProgramaDetalle" ColumnName="CodProgramaDetalle" />
+                <ScalarProperty Name="CodPrograma" ColumnName="CodPrograma" />
+                <ScalarProperty Name="DesPrograma" ColumnName="DesPrograma" />
+                <ScalarProperty Name="NombreCortoTorneo" ColumnName="NombreCortoTorneo" />
+                <ScalarProperty Name="CodigoIntralot" ColumnName="CodigoIntralot" />
+                <ScalarProperty Name="Minimo" ColumnName="Minimo" />
+                <ScalarProperty Name="DesEquipoLocal" ColumnName="DesEquipoLocal" />
+                <ScalarProperty Name="DesEquipoVisita" ColumnName="DesEquipoVisita" />
+                <ScalarProperty Name="L" ColumnName="L" />
+                <ScalarProperty Name="E" ColumnName="E" />
+                <ScalarProperty Name="V" ColumnName="V" />
+                <ScalarProperty Name="LoE" ColumnName="LoE" />
+                <ScalarProperty Name="LoV" ColumnName="LoV" />
+                <ScalarProperty Name="EoV" ColumnName="EoV" />
+                <ScalarProperty Name="PTL" ColumnName="PTL" />
+                <ScalarProperty Name="PTE" ColumnName="PTE" />
+                <ScalarProperty Name="PTV" ColumnName="PTV" />
+                <ScalarProperty Name="STL" ColumnName="STL" />
+                <ScalarProperty Name="STE" ColumnName="STE" />
+                <ScalarProperty Name="STV" ColumnName="STV" />
+                <ScalarProperty Name="LL" ColumnName="LL" />
+                <ScalarProperty Name="EL" ColumnName="EL" />
+                <ScalarProperty Name="VL" ColumnName="VL" />
+                <ScalarProperty Name="LE" ColumnName="LE" />
+                <ScalarProperty Name="EE" ColumnName="EE" />
+                <ScalarProperty Name="VE" ColumnName="VE" />
+                <ScalarProperty Name="LV" ColumnName="LV" />
+                <ScalarProperty Name="EV" ColumnName="EV" />
+                <ScalarProperty Name="VV" ColumnName="VV" />
+                <ScalarProperty Name="MENOSUNOCINCO" ColumnName="MENOSUNOCINCO" />
+                <ScalarProperty Name="MASUNOCINCO" ColumnName="MASUNOCINCO" />
+                <ScalarProperty Name="MENOSDOSCINCO" ColumnName="MENOSDOSCINCO" />
+                <ScalarProperty Name="MASDOSCINCO" ColumnName="MASDOSCINCO" />
+                <ScalarProperty Name="MENOSTRESCINCO" ColumnName="MENOSTRESCINCO" />
+                <ScalarProperty Name="MASTRESCINCO" ColumnName="MASTRESCINCO" />
+                <ScalarProperty Name="CEROUNO" ColumnName="CEROUNO" />
+                <ScalarProperty Name="DOSTRES" ColumnName="DOSTRES" />
+                <ScalarProperty Name="CUATROMAS" ColumnName="CUATROMAS" />
+                <ScalarProperty Name="AMBOS" ColumnName="AMBOS" />
+                <ScalarProperty Name="NINGUNO" ColumnName="NINGUNO" />
+                <ScalarProperty Name="IMPAR" ColumnName="IMPAR" />
+                <ScalarProperty Name="PAR" ColumnName="PAR" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Torneos">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.Torneos">
+              <MappingFragment StoreEntitySet="Torneos">
+                <ScalarProperty Name="CodTorneo" ColumnName="CodTorneo" />
+                <ScalarProperty Name="DesTorneo" ColumnName="DesTorneo" />
+                <ScalarProperty Name="NombreCorto" ColumnName="NombreCorto" />
+                <ScalarProperty Name="Flag" ColumnName="Flag" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneosFavoritos">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.TorneosFavoritos">
+              <MappingFragment StoreEntitySet="TorneosFavoritos">
+                <ScalarProperty Name="CodTorneoFavorito" ColumnName="CodTorneoFavorito" />
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="CodTorneo" ColumnName="CodTorneo" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuarios">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.Usuarios">
+              <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="Nombres" ColumnName="Nombres" />
+                <ScalarProperty Name="ApePaterno" ColumnName="ApePaterno" />
+                <ScalarProperty Name="ApeMaterno" ColumnName="ApeMaterno" />
+                <ScalarProperty Name="Correo" ColumnName="Correo" />
+                <ScalarProperty Name="Telefono" ColumnName="Telefono" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UsuariosJugadas">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.UsuariosJugadas">
+              <MappingFragment StoreEntitySet="UsuariosJugadas">
+                <ScalarProperty Name="CodPrograma" ColumnName="CodPrograma" />
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="CodProgramaDetalle" ColumnName="CodProgramaDetalle" />
+                <ScalarProperty Name="DesJugada" ColumnName="DesJugada" />
+                <ScalarProperty Name="Cuota" ColumnName="Cuota" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetRoles">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.AspNetRoles">
+              <MappingFragment StoreEntitySet="AspNetRoles">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserClaims">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.AspNetUserClaims">
+              <MappingFragment StoreEntitySet="AspNetUserClaims">
+                <ScalarProperty Name="ClaimValue" ColumnName="ClaimValue" />
+                <ScalarProperty Name="ClaimType" ColumnName="ClaimType" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUserLogins">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.AspNetUserLogins">
+              <MappingFragment StoreEntitySet="AspNetUserLogins">
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ProviderKey" ColumnName="ProviderKey" />
+                <ScalarProperty Name="LoginProvider" ColumnName="LoginProvider" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="AspNetUsers">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.AspNetUsers">
+              <MappingFragment StoreEntitySet="AspNetUsers">
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="AccessFailedCount" ColumnName="AccessFailedCount" />
+                <ScalarProperty Name="LockoutEnabled" ColumnName="LockoutEnabled" />
+                <ScalarProperty Name="LockoutEndDateUtc" ColumnName="LockoutEndDateUtc" />
+                <ScalarProperty Name="TwoFactorEnabled" ColumnName="TwoFactorEnabled" />
+                <ScalarProperty Name="PhoneNumberConfirmed" ColumnName="PhoneNumberConfirmed" />
+                <ScalarProperty Name="PhoneNumber" ColumnName="PhoneNumber" />
+                <ScalarProperty Name="SecurityStamp" ColumnName="SecurityStamp" />
+                <ScalarProperty Name="PasswordHash" ColumnName="PasswordHash" />
+                <ScalarProperty Name="EmailConfirmed" ColumnName="EmailConfirmed" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="C__MigrationHistory">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.C__MigrationHistory">
+              <MappingFragment StoreEntitySet="__MigrationHistory">
+                <ScalarProperty Name="ProductVersion" ColumnName="ProductVersion" />
+                <ScalarProperty Name="Model" ColumnName="Model" />
+                <ScalarProperty Name="ContextKey" ColumnName="ContextKey" />
+                <ScalarProperty Name="MigrationId" ColumnName="MigrationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="AspNetUserRoles" TypeName="dbTuCalcuModel.AspNetUserRoles" StoreEntitySet="AspNetUserRoles">
+            <EndProperty Name="AspNetUsers">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="AspNetRoles">
+              <ScalarProperty Name="Id" ColumnName="RoleId" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ea076a6be7f6445db41dcf7009ad617e" Name="Diagram1" ZoomLevel="64">
+        <EntityTypeShape EntityType="dbTuCalcuModel.Equipos" Width="1.5" PointX="0.75" PointY="9" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.EquiposFavoritos" Width="1.5" PointX="3" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.Programas" Width="1.5" PointX="0.75" PointY="11.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.ProgramasDetalle" Width="1.5" PointX="0.75" PointY="14.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.Torneos" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.TorneosFavoritos" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.Usuarios" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.UsuariosJugadas" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_EquiposFavoritos_Equipos" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_EquiposFavoritos_Usuarios" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_ProgramaDetalle_Programa" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_UsuarioJugada_Programa" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_UsuarioJugada_ProgramaDetalle" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_TorneosFavoritos_Torneos" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_TorneosFavoritos_Usuarios" ManuallyRouted="false" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_UsuarioJugada_Usuarios" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.AspNetRoles" Width="1.5" PointX="5.375" PointY="6.5" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.AspNetUserClaims" Width="1.5" PointX="9.875" PointY="7.625" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.AspNetUserLogins" Width="1.5" PointX="9.875" PointY="5" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.AspNetUsers" Width="1.5" PointX="7.625" PointY="5.375" />
+        <EntityTypeShape EntityType="dbTuCalcuModel.C__MigrationHistory" Width="1.5" PointX="8.375" PointY="0.75" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="dbTuCalcuModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="dbTuCalcuModel.AspNetUserRoles" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

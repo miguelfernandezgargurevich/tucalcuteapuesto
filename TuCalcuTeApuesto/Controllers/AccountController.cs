@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -17,9 +20,11 @@ namespace TuCalcuTeApuesto.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        dbTuCalcuEntities _db;
 
         public AccountController()
         {
+
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -73,22 +78,68 @@ namespace TuCalcuTeApuesto.Controllers
                 return View(model);
             }
 
-            // No cuenta los errores de inicio de sesión para el bloqueo de la cuenta
-            // Para permitir que los errores de contraseña desencadenen el bloqueo de la cuenta, cambie a shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            try
             {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Intento de inicio de sesión no válido.");
-                    return View(model);
+                // No cuenta los errores de inicio de sesión para el bloqueo de la cuenta
+                // Para permitir que los errores de contraseña desencadenen el bloqueo de la cuenta, cambie a shouldLockout: true
+
+                var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+
+                //_db = new dbTuCalcuEntities();
+                //Usuarios usuarios = _db.Usuarios.Where(m => m.Correo == model.Email && m.Password == model.Password).ToList().FirstOrDefault();
+                //TempData["Usuarios"] = usuarios;
+
+                switch (result)
+                {
+                    case SignInStatus.Success:
+                        return RedirectToLocal(returnUrl);
+                    case SignInStatus.LockedOut:
+                        return View("Lockout");
+                    case SignInStatus.RequiresVerification:
+                        return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    case SignInStatus.Failure:
+                    default:
+                        ModelState.AddModelError("", "Intento de inicio de sesión no válido.");
+                        return View(model);
+                }
             }
+            catch (Exception ex)
+            {
+                var error = CapturarError(ex);
+
+                //PARA SSIS
+                var fileUnicoNameSSIS = String.Concat("ERROR", ".txt");
+                var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
+
+                using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
+                {
+                    byte[] bytes = Encoding.UTF8.GetBytes(error);
+                    fs.Write(bytes, 0, bytes.Length);
+                    fs.Close();
+                }
+                return View("ERROR");
+
+            }
+        }
+
+        public string CapturarError(Exception error, string controlador = "", string accion = "")
+        {
+            var msg = error.Message;
+            if (error.InnerException != null)
+            {
+                msg = msg + "/;/" + error.InnerException.Message;
+                if (error.InnerException.InnerException != null)
+                {
+                    msg = msg + "/;/" + error.InnerException.InnerException.Message;
+                    if (error.InnerException.InnerException.InnerException != null)
+                        msg = msg + "/;/" + error.InnerException.InnerException.InnerException.Message;
+                }
+            }
+
+
+            var comentario = $@"Se ejecutó la accion: [{controlador}/{accion}] - MensajeError: {msg}";
+            //log.ErrorFormat("{0} | {1}", comentario, error.StackTrace);
+            return string.Format("{0} | {1}", comentario, error.StackTrace);
         }
 
         //

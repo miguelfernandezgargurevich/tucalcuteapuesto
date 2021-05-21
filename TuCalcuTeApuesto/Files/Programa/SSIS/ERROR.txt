@@ -1,0 +1,18 @@
+Se ejecutó la accion: [/] - MensajeError: El tipo de entidad ApplicationUser no forma parte del modelo del contexto actual. |    en System.Data.Entity.Internal.InternalContext.UpdateEntitySetMappingsForType(Type entityType)
+   en System.Data.Entity.Internal.InternalContext.GetEntitySetAndBaseTypeForType(Type entityType)
+   en System.Data.Entity.Internal.Linq.InternalSet`1.Initialize()
+   en System.Data.Entity.Internal.Linq.InternalSet`1.get_InternalContext()
+   en System.Data.Entity.Infrastructure.DbQuery`1.System.Linq.IQueryable.get_Provider()
+   en System.Data.Entity.QueryableExtensions.FirstOrDefaultAsync[TSource](IQueryable`1 source, Expression`1 predicate, CancellationToken cancellationToken)
+   en System.Data.Entity.QueryableExtensions.FirstOrDefaultAsync[TSource](IQueryable`1 source, Expression`1 predicate)
+   en Microsoft.AspNet.Identity.EntityFramework.UserStore`6.<GetUserAggregateAsync>d__67.MoveNext()
+--- Fin del seguimiento de la pila de la ubicación anterior donde se produjo la excepción ---
+   en System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   en System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   en Microsoft.AspNet.Identity.TaskExtensions.CultureAwaiter`1.GetResult()
+   en Microsoft.AspNet.Identity.Owin.SignInManager`2.<PasswordSignInAsync>d__25.MoveNext()
+--- Fin del seguimiento de la pila de la ubicación anterior donde se produjo la excepción ---
+   en System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   en System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   en System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   en TuCalcuTeApuesto.Controllers.AccountController.<Login>d__12.MoveNext() en C:\Datos Final\TuCalcuTeApuesto\TuCalcluTeApuesto\TuCalcuTeApuesto\TuCalcuTeApuesto\Controllers\AccountController.cs:línea 87

@@ -1,0 +1,58 @@
+﻿<div class="modal-header">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            @*<button type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Cerrar</button>*@
+            <span class="fa fa-times fa-2x pull-right hand" aria-hidden="true" style="cursor: pointer;" data-dismiss="modal"></span>
+        </div>
+    </div>
+
+</div>
+<div class="modal-body nopadding" style="height:300px;">
+    @if (Model != null)
+    {
+        <div class="panel-group" id="accordionTorneos" role="tablist" aria-multiselectable="true">
+            <div class="panel">
+                <div class="panel-heading myHeadAcordeon" role="tab" id="headingTorneos" data-toggle="collapse" data-parent="#accordion" href="#collapseTorneos" aria-expanded="false" aria-controls="collapseTorneos">
+                    <h4 class="panel-title">
+                        <span>
+                            <span class="fa fa-trophy fa-lg mysearch btn"></span><span>&nbsp;Torneos (@Model.ListaTorneos.Count.ToString())</span>
+                        </span>
+                    </h4>
+                </div>
+                <div id="collapseTorneos" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTorneos">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-12 col-xs-12">
+                                <label class="containerCheckbox">
+                                    Seleccionar todos
+                                    <input type="checkbox" checked="checked" onchange="seleccionarTodos()" id="seleccionar-todos">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </div>
+
+                            <div id="divlistaTorneos" class="col-md-12 col-xs-12 nopadding">
+
+                                @if (Model.ListaTorneos != null)
+                                {
+                                    foreach (var item in @Model.ListaTorneos)
+                                    {
+
+                                        <div class="col-md-4 col-xs-4">
+                                            <label class="containerCheckbox">
+                                                <span style="font-size:large; background: url('/Imagenes/flags/@item.Imagen') no-repeat center left; padding-left: 20px; padding-block:5px;">@item.Text</span>
+                                                <input type="checkbox" class="ckecks" value="@item.Text" checked="@item.IsChecked" onchange="cargarTorneo()" id="@(item.Value)">
+                                                <span class="checkmark"></span>
+                                            </label>
+
+                                        </div>
+                                    }
+                                    <label style="font-size:x-small" class="hide" id="lblCadenaTorneos"></label>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

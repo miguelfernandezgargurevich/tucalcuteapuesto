@@ -54,9 +54,9 @@ namespace TuCalcuTeApuesto
             //   consumerKey: "",
             //   consumerSecret: "");
 
-            //app.UseFacebookAuthentication(
-            //   appId: "",
-            //   appSecret: "");
+            app.UseFacebookAuthentication(
+               appId: "1678267009024271",
+               appSecret: "7f2df7d6e38fa086bd71c2bdbf344e76");
 
             //app.UseGoogleAuthentication(new GoogleOAuth2AuthenticationOptions()
             //{

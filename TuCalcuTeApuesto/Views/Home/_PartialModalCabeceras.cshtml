@@ -1,0 +1,327 @@
+﻿<div class="modal-header">
+    @*<h5 class="modal-title" id="examplemodallabel2">mas opciones</h5>*@
+    <div class="row">
+        <div class="col-md-6 col-xs-6 pull-left">
+            <img id="imgInclina" src="~/Imagenes/inclina.png" width="50" />
+        </div>
+        <div class="col-md-5 col-xs-6 pull-right">
+            @*<button type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Cerrar</button>*@
+            <span class="fa fa-times fa-2x pull-right hand" aria-hidden="true" style="cursor: pointer;" data-dismiss="modal"></span>
+        </div>
+    </div>
+
+</div>
+<div class="modal-body nopadding" style="height:400px;">
+    @if (Model != null)
+    {
+        <div class="form-group" id="divListaCabeceras">
+            @if (Model.ListaCabeceras != null)
+            {
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading01" data-toggle="collapse" data-parent="#accordion" href="#collapse01" aria-expanded="false" aria-controls="collapse01">
+                            <h4 class="panel-title">
+                                <span>
+                                    OPCION SIMPLE
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse01" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading01">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 0)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading02" data-toggle="collapse" data-parent="#accordion" href="#collapse02" aria-expanded="false" aria-controls="collapse02">
+                            <h4 class="panel-title">
+                                <span>
+                                    OPCION DOBLE
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse02" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading02">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 1)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <div class="col-md-4 col-xs-4">
+                                                    <label class="containerCheckbox">
+                                                        @item.Text
+                                                        <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                        <span class="checkmark"></span>
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading03" data-toggle="collapse" data-parent="#accordion" href="#collapse03" aria-expanded="false" aria-controls="collapse03">
+                            <h4 class="panel-title">
+                                <span>
+                                    PRIMER TIEMPO
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse03" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading03">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 2)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <div class="col-md-4 col-xs-4">
+                                                    <label class="containerCheckbox">
+                                                        @item.Text
+                                                        <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                        <span class="checkmark"></span>
+                                                    </label>
+
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading04" data-toggle="collapse" data-parent="#accordion" href="#collapse04" aria-expanded="false" aria-controls="collapse04">
+                            <h4 class="panel-title">
+                                <span>
+                                    SEGUNDO TIEMPO
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse04" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading04">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 3)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading05" data-toggle="collapse" data-parent="#accordion" href="#collapse05" aria-expanded="false" aria-controls="collapse05">
+                            <h4 class="panel-title">
+                                <span>
+                                    PRIMER TIEMPO Y RESULTADO FINAL
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse05" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading05">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 4)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading06" data-toggle="collapse" data-parent="#accordion" href="#collapse06" aria-expanded="false" aria-controls="collapse06">
+                            <h4 class="panel-title">
+                                <span>
+                                    MENOS / MAS GOLES
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse06" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading06">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 5)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading07" data-toggle="collapse" data-parent="#accordion" href="#collapse07" aria-expanded="false" aria-controls="collapse07">
+                            <h4 class="panel-title">
+                                <span>
+                                    RANGO DE GOL
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse07" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading07">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 6)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading08" data-toggle="collapse" data-parent="#accordion" href="#collapse08" aria-expanded="false" aria-controls="collapse08">
+                            <h4 class="panel-title">
+                                <span>
+                                    GOL NO GOL
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse08" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading08">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 7)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-group" id="accordion04" role="tablist" aria-multiselectable="true">
+                    <div class="panel">
+                        <div class="panel-heading myHeadAcordeon" role="tab" id="heading09" data-toggle="collapse" data-parent="#accordion" href="#collapse09" aria-expanded="false" aria-controls="collapse09">
+                            <h4 class="panel-title">
+                                <span>
+                                    PAR / IMPAR
+                                </span>
+                            </h4>
+                        </div>
+                        <div id="collapse09" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading09">
+                            <div class="panel-body">
+                                <div class="form-group">
+                                    @foreach (var item in Model.ListaCabeceras)
+                                    {
+                                        if (item.IdGrupo == 8)
+                                        {
+                                            <div class="col-md-4 col-xs-4">
+                                                <label class="containerCheckbox">
+                                                    @item.Text
+                                                    <input type="checkbox" value="@item.Value" checked="@item.IsChecked" onchange="evalCheckOpcion(@item.Value)" id="chk@(item.Value)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+
+                                            </div>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    }
+
+
+</div>
