@@ -5,19 +5,19 @@ using System.Threading.Tasks;
 
 namespace TuCalcuTeApuesto.Models
 {
-    public class TorneoModel
+    public class EquiposModel
     {
         public int Value { get; set; }
         public string Text { get; set; }
         public bool IsChecked { get; set; }
         public string Imagen { get; set; }
-        public string NombreCorto { get; set; }
+
         public string IsSelected { get; set; }
     }
 
-    public class ListaTorneo
+    public class ListaEquipos
     {
-        public List<TorneoModel> Lista { get; set; }
+        public List<EquiposModel> Lista { get; set; }
 
     }
 

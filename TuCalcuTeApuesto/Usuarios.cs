@@ -17,8 +17,6 @@ namespace TuCalcuTeApuesto
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Usuarios()
         {
-            this.EquiposFavoritos = new HashSet<EquiposFavoritos>();
-            this.TorneosFavoritos = new HashSet<TorneosFavoritos>();
             this.UsuariosJugadas = new HashSet<UsuariosJugadas>();
         }
     
@@ -30,10 +28,6 @@ namespace TuCalcuTeApuesto
         public string Telefono { get; set; }
         public string Password { get; set; }
     
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<EquiposFavoritos> EquiposFavoritos { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<TorneosFavoritos> TorneosFavoritos { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UsuariosJugadas> UsuariosJugadas { get; set; }
     }

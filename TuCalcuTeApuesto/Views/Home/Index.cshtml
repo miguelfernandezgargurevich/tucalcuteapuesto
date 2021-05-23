@@ -9,6 +9,14 @@
 
 <style>
 
+    .mycaptionFav {
+        text-align: left;
+        padding: 5px 10px;
+        background-color: #fff;
+        color: #f60;
+        font-weight: bold;
+        font-size: large;
+    }
 
     .terms {
         display: flex;
@@ -350,7 +358,7 @@
 
                                     <div class="row">
                                         <div class="col-md-6 col-xs-6 pull-left">
-                                            <input id="txtBuscar" type="text" class="form-control" placeholder="Busca tu equipo" onkeyup="cargarTorneo()">
+                                            <input id="txtBuscar" type="text" class="form-control" placeholder="Busca tu equipo" onkeyup="cargarTorneoHoy()">
                                         </div>
                                         <div class="col-md-6 col-xs-6 pull-left" style="padding-top: 5px;">
                                             <div class="col-md-3 col-xs-3 nopadding" style="text-align:center;">
@@ -363,7 +371,7 @@
                                                 <span class="fa fa-trophy fa-2x mysearch btn" data-toggle="modal" data-target="#exampleModal3"></span>
                                             </div>
                                             <div class="col-md-3 col-xs-3 nopadding" style="text-align:center;">
-                                                <span class="fa fa-star fa-2x mysearch btn" id="imgEvalFav"  onclick="evalFav()"></span>
+                                                <span class="fa fa-star fa-2x mysearch btn" id="imgEvalFav" onclick="evalFav()"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -428,7 +436,7 @@
 
                                             </table>
                                         </div>
-                                        <div style="height:350px; overflow:visible; overflow-y: scroll;">
+                                        <div style="height:250px; overflow:visible; overflow-y: scroll;" >
                                             <table id="tblmyDataTable" class="table myTable">
                                                 <tbody id="tbody">
                                                     @if (Model != null)
@@ -516,12 +524,12 @@
                                             </div>
                                             <div class="col-md-6 col-xs-6" style="margin-top:5px;">
                                                 <div class="pull-right">
-                                                    <label  style="font-size:x-small;" for="total">Total S/. </label>
+                                                    <label style="font-size:x-small;" for="total">Total S/. </label>
                                                     <label for="lblGanancia" id="lblGanancia" style="font-size:x-large;">0.00</label>
                                                     <span id="lblTotalfoot" class="hide"></span>
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
                                         <div class="col-md-12 col-xs-12" style="margin-top:15px;">
                                             <div class="box-body table-responsive no-padding" style="z-index: -900;">
@@ -541,7 +549,7 @@
                                                             </tr>
                                                         </thead>
                                                     </table>
-                                                    <div style="height:180px; overflow:auto;">
+                                                    <div style="height:180px; overflow:auto; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
                                                         <table id="tblJugada" class="table">
                                                             <tbody id="tbodyJugada"></tbody>
                                                             <tfoot id="tfootJugada"></tfoot>
@@ -553,7 +561,7 @@
                                         </div>
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
                     </div>
@@ -611,7 +619,7 @@
             <div id="partialCalendar">
                 @Html.Partial("_PartialModalCalendar")
             </div>
-            
+
         </div>
     </div>
 </div>
@@ -630,8 +638,19 @@
 <div class="modal fade" id="exampleModal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel3" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div id="partialTorneos">
-                @Html.Partial("_PartialModalTorneos")
+            <div id="partialTorneosHoy">
+                @Html.Partial("_PartialModalTorneosHoy")
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModal4" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel4" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div id="partialEquiposFav">
+                @Html.Partial("_PartialModalFavoritos")
             </div>
 
         </div>
@@ -739,11 +758,12 @@
         if (isNullOrEmpty(totalCuota))
             totalCuota = "0";
 
-        dtProgramaHeader.getElementsByTagName("span")[0].innerText = dtPrograma.rows.length;
-        dtProgramaHeader.getElementsByTagName("span")[1].innerText = " / " + dtPrograma.rows.length;
+        //dtProgramaHeader.getElementsByTagName("span")[0].innerText = dtPrograma.rows.length;
+        //dtProgramaHeader.getElementsByTagName("span")[1].innerText = " / " + dtPrograma.rows.length;
+        dtProgramaHeader.getElementsByTagName("span")[1].innerText = dtPrograma.rows.length;
         //dtJugadaHeader.getElementsByTagName("span")[0].innerText = "Cuota: " + totalCuota;
         document.getElementById('lblCuota').innerText = totalCuota;
-        
+
 
         //$('.js-example-basic-multiple').select2();
 
@@ -753,8 +773,9 @@
         //const note = document.querySelector('.note');
         //note.style.backgroundColor = 'yellow';
         var isAuth = evalIsAuth();
-        if (isAuth == true)
+        if (isAuth == true) {
             element.style.color = 'gold';
+        }
 
     }
 
@@ -773,7 +794,9 @@
 
         if (isRequestAuthenticated == 'True') {
             var usuario = '@User.Identity.GetUserName()';
-                alert("Mostrar modal favoritos: " + usuario);
+            //alert("Mostrar modal favoritos: " + usuario);
+            $('#exampleModal4').modal('toggle');
+            //$('#exampleModal4').modal('show');
         }
         else {
             alert("Debes iniciar sesion para ver tus favoritos");
@@ -784,11 +807,11 @@
 
         var chk = document.getElementById("seleccionar-todos");
 
-        $("#divlistaTorneos .ckecks").each(function () {
+        $("#divlistaTorneosHoy .ckecks").each(function () {
             $(this)[0].checked = chk.checked;
         });
 
-        cargarTorneo();
+        cargarTorneoHoy();
 
     }
 
@@ -796,7 +819,7 @@
 
         if (event.keyCode == 13) {
             event.preventDefault();
-            cargarTorneo();
+            cargarTorneoHoy();
         }
     }
 
@@ -844,7 +867,6 @@
 
         cargarOpcion(id);
     }
-
 
     function cargarOpcion(id) {
         var cabecera = '.col' + id;
@@ -1159,19 +1181,20 @@
             element.style.removeProperty("color");
         }
 
-        cargarTorneo();
+        cargarTorneoHoy();
 
     }
 
-    function cargarTorneo() {
+    function cargarTorneoHoy() {
         const txtBuscarEquipo = document.getElementById("txtBuscar");
         const inputStr = txtBuscarEquipo.value.toUpperCase();
         var chkTodos = document.getElementById("seleccionar-todos");
         var hora = document.getElementById('lblsearchProximos').innerHTML;
-        var listaTorneos = @Html.Raw(JsonConvert.SerializeObject(this.Model.ListaTorneos));
+        var listaTorneos = @Html.Raw(JsonConvert.SerializeObject(this.Model.ListaTorneosHoy));
         var listaTorneosvalues = [];
 
-        $("#divlistaTorneos .ckecks").each(function () {
+        //llena listaTorneosvalues para luego buscar solo esos
+        $("#divlistaTorneosHoy .ckecks").each(function () {
 
             if ($(this).is(":checked")) {
                 var myobj = $(this);
@@ -1186,7 +1209,7 @@
             var concatTorneos = makeString(listaTorneosvalues);
             document.getElementById("lblCadenaTorneos").innerHTML = concatTorneos;
 
-            var listaFiles = @Html.Raw(JsonConvert.SerializeObject(this.Model.ListaTorneos));
+            var listaFiles = @Html.Raw(JsonConvert.SerializeObject(this.Model.ListaTorneosHoy));
             if (listaTorneosvalues.length < listaFiles.length)
                 chkTodos.checked = false;
             else
@@ -1195,13 +1218,12 @@
         else {
             chkTodos.checked = false;
         }
+        //fin llena listaTorneosvalues
 
+        //Busca en tablaa
         var t = document.getElementById("tblmyDataTable");
         var trs = t.getElementsByTagName("tr");
         var tds = null;
-
-        var arrayFilasMostrar = [];
-        var filaarray = 0;
 
         for (var i = 0; i < trs.length; i++) {
             tds = trs[i].getElementsByTagName("td");
@@ -1217,20 +1239,18 @@
             var existeEnSoloProximos = evaluaExisteEnProximos(hora, colHora);
 
             if (existeEnSelTorneo && existeEnSoloProximos && (existeEnLocal || existeEnVisita)) {
-                arrayFilasMostrar[filaarray] = trs[i].id;
-                filaarray = filaarray + 1;
                 trs[i].style.removeProperty('display');
-
             }
             else {
                 trs[i].style.display = 'none';
             }
-
         }
+        //fin busca en tabla
 
         const dtProgramaHeader = document.getElementById('tableHeader');
-        dtProgramaHeader.getElementsByTagName("span")[0].innerText = "Eventos: " + filaarray;
-        dtProgramaHeader.getElementsByTagName("span")[1].innerText = " /  " + trs.length;
+        //dtProgramaHeader.getElementsByTagName("span")[0].innerText = "Eventos: " + filaarray;
+        //dtProgramaHeader.getElementsByTagName("span")[1].innerText = " /  " + trs.length;
+        dtProgramaHeader.getElementsByTagName("span")[1].innerText = trs.length;
 
 
     }
@@ -1417,4 +1437,3 @@
     }
 
 </script>
-

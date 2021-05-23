@@ -20,7 +20,6 @@ namespace TuCalcuTeApuesto.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-        dbTuCalcuEntities _db;
 
         public AccountController()
         {

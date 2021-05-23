@@ -1,22 +1,33 @@
-﻿@{
+﻿
+
+@using Newtonsoft.Json
+@using System.Linq
+@using Microsoft.AspNet.Identity
+
+<style>
+
+    .rating {
+        unicode-bidi: bidi-override;
+        direction: rtl;
+        cursor: pointer;
+    }
+        .rating > span {
+            display: inline-block;
+            position: relative;
+            width: 1.1em;
+        }
+            .rating > span:hover:before,
+            .rating > span:hover ~ span:before {
+                content: "\f005";
+                color: gold;
+            }
+
+</style>
+@{
     ViewBag.Title = "Contacto";
 }
 <h2>@ViewBag.Title.</h2>
 @*<h3>@ViewBag.Message</h3>*@
-
-@*<div class="col-md-3 text-center">
-    <ul class="list-unstyled mb-0">
-        <li>
-            <i class="fa fa-phone mt-4 fa-2x"></i>
-            <p>+ 051 966 918 363</p>
-        </li>
-
-        <li>
-            <i class="fa fa-envelope mt-4 fa-2x"></i>
-            <p>miguel.gargurevich@gmail.com</p>
-        </li>
-    </ul>
-</div>*@
 
 <p class="text-md-left w-responsive mx-auto mb-5">
     Si tienes alguna sugerencia o comentario, escribenos!, apreciamos mucho tus comentarios y nos ayudan a mejorar.
@@ -29,16 +40,6 @@
 
             <!--Grid row-->
             <div class="row">
-
-                <!--Grid column-->
-                <div class="col-md-12">
-                    <div class="md-form mb-0">
-                        <label for="name" class="">Nombre</label>
-                        <input type="text" id="txtNombre" name="name" class="form-control">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-md-12">
 
                     <div class="md-form">
@@ -47,7 +48,23 @@
                     </div>
 
                 </div>
+                <div class="col-md-12">
+                    <div>
+
+                        <div class="rating pull-left" style="padding-top: 15px;">
+
+                            <span id="rate5" onclick="evalRate(this);" class="fa fa-star fa-2x"></span>
+                            <span id="rate4" onclick="evalRate(this);" class="fa fa-star fa-2x"></span>
+                            <span id="rate3" onclick="evalRate(this);" class="fa fa-star fa-2x"></span>
+                            <span id="rate2" onclick="evalRate(this);" class="fa fa-star fa-2x"></span>
+                            <span id="rate1" onclick="evalRate(this);" class="fa fa-star fa-2x"></span>
+                            <span class="hidden" id="lblStars">0</span>
+                        </div>
+                    </div>
+
+                </div>
             </div>
+            
         </div>
         <br />
         <div class="text-md-left">
@@ -61,7 +78,7 @@
 
 </div>
 <address>
-    
+
     <abbr title="Phone">Telefono:</abbr>
     +051 966 918 363<br />
     Lima. PE<br />
@@ -74,15 +91,15 @@
 <script>
     function enviarComentario() {
         var mensaje = $("#txtMensaje").val();
-        var nombre = $("#txtNombre").val();
+        var rate = document.getElementById("lblStars").innerHTML;
 
         if (mensaje == "") {
             alert("Ingrese un comentario");
             return false;
         }
         var dataObject = JSON.stringify({
-            'Nombre': nombre,
             'Mensaje': mensaje,
+            'Puntaje': rate,
         });
 
         $.ajax({
@@ -92,9 +109,11 @@
             type: 'POST',
             success: function (data) {
                 if (data == "true") {
-                    //$("#txtNombre").val() = "";
-                    //$("#txtMensaje").val() = "";
+                    $("#txtMensaje").val("");
                     alert("Su comentario se envió con éxito.");
+
+                    var myurl = '/Home/Index/';
+                    window.location.href = myurl;
                 }
                 else {
                     alert("Result: " + data);
@@ -102,6 +121,29 @@
             }
         });
 
+    }
+
+    function evalRate(obj) {
+        const starTotal = 5;
+        var id = obj.id;
+        var index = Number(id.replace('rate', ''));
+
+        for (var i = 1; i <= index; i++) {
+            var myid = 'rate' + i;
+            var rate = document.getElementById(myid);
+            rate.style.color = 'gold';
+        }
+
+        if (index < starTotal) {
+            for (var i = index+1; i <= starTotal; i++) {
+                var myid = 'rate' + i;
+                var rate = document.getElementById(myid);
+                rate.style.removeProperty("color");
+            }
+        }
+
+        document.getElementById("lblStars").innerHTML = index;
+            
     }
 
 

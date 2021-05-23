@@ -10,6 +10,10 @@ namespace TuCalcuTeApuesto.Models
     {
         public List<ModeloModel> Lista { get; set; }
         public List<CabeceraModel> ListaCabeceras { get; set; }
+        public List<TorneoModel> ListaTorneosHoy { get; set; }
+        public List<EquiposFavModel> ListaEquiposFav { get; set; }
+        public List<EquiposModel> ListaEquipos { get; set; }
+        public List<TorneosFavModel> ListaTorneosFav { get; set; }
         public List<TorneoModel> ListaTorneos { get; set; }
         public List<int> ListaCabecerasFav { get; set; }
         public List<int> ListaCabecerasMin { get; set; }

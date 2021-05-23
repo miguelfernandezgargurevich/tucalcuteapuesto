@@ -26,12 +26,10 @@ namespace TuCalcuTeApuesto
         }
     
         public virtual DbSet<Equipos> Equipos { get; set; }
-        public virtual DbSet<EquiposFavoritos> EquiposFavoritos { get; set; }
         public virtual DbSet<Programas> Programas { get; set; }
         public virtual DbSet<ProgramasDetalle> ProgramasDetalle { get; set; }
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<Torneos> Torneos { get; set; }
-        public virtual DbSet<TorneosFavoritos> TorneosFavoritos { get; set; }
         public virtual DbSet<Usuarios> Usuarios { get; set; }
         public virtual DbSet<UsuariosJugadas> UsuariosJugadas { get; set; }
         public virtual DbSet<AspNetRoles> AspNetRoles { get; set; }
@@ -39,5 +37,8 @@ namespace TuCalcuTeApuesto
         public virtual DbSet<AspNetUserLogins> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUsers> AspNetUsers { get; set; }
         public virtual DbSet<C__MigrationHistory> C__MigrationHistory { get; set; }
+        public virtual DbSet<Comentarios> Comentarios { get; set; }
+        public virtual DbSet<EquiposFavoritos> EquiposFavoritos { get; set; }
+        public virtual DbSet<TorneosFavoritos> TorneosFavoritos { get; set; }
     }
 }

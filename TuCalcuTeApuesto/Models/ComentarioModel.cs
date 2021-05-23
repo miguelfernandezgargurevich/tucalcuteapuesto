@@ -7,8 +7,8 @@ namespace TuCalcuTeApuesto.Models
 {
     public class ComentarioModel
     {
-        public string Nombre { get; set; }
         public string Mensaje { get; set; }
-
+        public Nullable<int> Puntaje { get; set; }
+        public Nullable<int> CodUsuario { get; set; }
     }
 }

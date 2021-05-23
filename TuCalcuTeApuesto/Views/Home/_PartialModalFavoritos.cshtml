@@ -1,0 +1,719 @@
+﻿@using Newtonsoft.Json
+@using System.Linq
+@using Microsoft.AspNet.Identity
+
+<div class="modal-header">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            @*<button type="button" class="btn btn-secondary pull-right" data-dismiss="modal">Cerrar</button>*@
+            <span class="fa fa-times fa-2x pull-right hand" aria-hidden="true" style="cursor: pointer;" data-dismiss="modal"></span>
+        </div>
+    </div>
+
+</div>
+<div class="modal-body nopadding" style="height:200px;">
+    @if (Model != null)
+    {
+        <div class="panel-group" id="accordionEquiposFavoritos" role="tablist" aria-multiselectable="true">
+            <div class="panel">
+                <div class="panel-heading myHeadAcordeon" role="tab" id="headingEquiposFavoritos" data-toggle="collapse" data-parent="#accordion" href="#collapseEquiposFavoritos" aria-expanded="false" aria-controls="collapseEquiposFavoritos">
+                    <h4 class="panel-title">
+                        <span>
+                            <span class="fa fa-users fa-lg mysearch btn"></span><span>&nbsp;Mis Equipos</span>
+                        </span>
+                    </h4>
+                </div>
+                <div id="collapseEquiposFavoritos" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingEquiposFavoritos">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-12 col-xs-12">
+                                @*<span style="font-size:x-small">Fav: </span><span id="lblTotalFav">@Model.ListaEquiposFav.Count</span>*@
+                                <div class="box-body table-responsive no-padding" style="z-index:-999;">
+                                    <div>
+                                        <table id="tableHeaderEquipos" class="table myTableHead">
+                                            @*<caption class="mycaptionthead"><span></span><span style="font-size:x-small"></span></caption>*@
+                                            <thead id="tbodyHeaderEquiposFav" class="mythead">
+                                                <tr style="height: 30px;">
+                                                    <th class="col0" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+                                                    <th class="col1" style="width:70%; padding: 4px; padding-bottom:7px; text-align:left;"><span style="font-size:xx-small;">EQUIPO</span></th>
+                                                    <th class="col2" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+
+                                                </tr>
+                                            </thead>
+
+                                        </table>
+                                    </div>
+
+                                    <div style="height:150px; overflow:visible; overflow-y: scroll; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
+                                        <table id="mylistaEquiposFav" class="table myTable">
+                                            <tbody id="tbodyEquiposFav">
+                                                @if (Model != null)
+                                                {
+                                                    foreach (var c in Model.ListaEquiposFav)
+                                                    {
+                                                        <tr id="trEquiposFavID_@c.Value">
+                                                            <td style="width:10%; text-align:center; padding: 4px; background: url('/Imagenes/flags/@c.Imagen') no-repeat center left; padding-left: 20px; "><span style="display:none">@c.Imagen</span></td>
+                                                            <td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">@c.Text</td>
+                                                            <td style="width:10%;"><a href="javascript:delEquipoFav('@c.Value');" class="fa fa-times fa-lg hand" title="Eliminar" bs-tooltip></a></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-xs-12" style="padding-top:15px;">
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12 pull-left">
+                                        <input id="txtBuscarEquiposFav" type="text" class="form-control" placeholder="Buscar mas equipos" onkeyup="cargarEquiposFav()">
+                                    </div>
+
+                                </div>
+                                <div id="panelBuscarEquipos" class="row" style="margin-top:15px;">
+                                    <div class="col-md-12">
+                                        <div class="box-body table-responsive no-padding" style="z-index:-999;">
+                                            <div style="display:none;">
+                                                <table id="tableHeaderEquipos" class="table myTableHead">
+                                                    @*<caption class="mycaptionthead"><span></span><span style="font-size:x-small"></span></caption>*@
+                                                    <thead id="tbodyHeaderEquipos" class="mythead">
+                                                        <tr style="height: 30px;">
+                                                            <th class="col0" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+                                                            <th class="col1" style="width:70%; padding: 4px; padding-bottom:7px; text-align:left;"><span style="font-size:xx-small;">EQUIPO</span></th>
+                                                            <th class="col2" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+
+                                                        </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                            <div style="height:150px; overflow:visible; overflow-y: scroll; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
+                                                <table id="tblmyDataTableEquipos" class="table myTable">
+                                                    <tbody id="tbodyEquipos">
+                                                        @if (Model != null)
+                                                        {
+                                                            foreach (var c in Model.ListaEquipos)
+                                                            {
+                                                                <tr id="trEquiposID_@c.Value">
+                                                                    <td style="width:10%; text-align:center; padding: 4px; background: url('/Imagenes/flags/@c.Imagen') no-repeat center left; padding-left: 20px; "><span style="display:none">@c.Imagen</span></td>
+                                                                    <td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">@c.Text</td>
+                                                                    <td style="width:10%;"><a href="javascript:addEquiposFav('@c.Value');" class="fa fa-plus fa-lg hand" title="Agregar" bs-tooltip></a></td>
+
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-group" id="accordionTorneosFavoritos" role="tablist" aria-multiselectable="true">
+            <div class="panel">
+                <div class="panel-heading myHeadAcordeon" role="tab" id="headingTorneosFavoritos" data-toggle="collapse" data-parent="#accordion" href="#collapseTorneosFavoritos" aria-expanded="false" aria-controls="collapseTorneosFavoritos">
+                    <h4 class="panel-title">
+                        <span>
+                            <span class="fa fa-trophy fa-lg mysearch btn"></span><span>&nbsp;Mis Torneos</span>
+                        </span>
+                    </h4>
+                </div>
+                <div id="collapseTorneosFavoritos" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTorneosFavoritos">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-12 col-xs-12">
+                                @*<span style="font-size:x-small">Fav: </span><span id="lblTotalFav">@Model.ListaTorneosFav.Count</span>*@
+                                <div class="box-body table-responsive no-padding" style="z-index:-999;">
+                                    <div>
+                                        <table id="tableHeaderTorneos" class="table myTableHead">
+                                            @*<caption class="mycaptionthead"><span></span><span style="font-size:x-small"></span></caption>*@
+                                            <thead id="tbodyHeaderTorneosFav" class="mythead">
+                                                <tr style="height: 30px;">
+                                                    <th class="col0" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+                                                    <th class="col1" style="width:70%; padding: 4px; padding-bottom:7px; text-align:left;"><span style="font-size:xx-small;">TORNEO</span></th>
+                                                    <th class="col2" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+
+                                                </tr>
+                                            </thead>
+
+                                        </table>
+                                    </div>
+
+                                    <div style="height:150px; overflow:visible; overflow-y: scroll; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
+                                        <table id="mylistaTorneosFav" class="table myTable">
+                                            <tbody id="tbodyTorneosFav">
+                                                @if (Model != null)
+                                                {
+                                                    foreach (var c in Model.ListaTorneosFav)
+                                                    {
+                                                        <tr id="trTorneosFavID_@c.Value">
+                                                            <td style="width:10%; text-align:center; padding: 4px; background: url('/Imagenes/flags/@c.Imagen') no-repeat center left; padding-left: 20px; "><span style="display:none">@c.Imagen</span></td>
+                                                            <td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">@c.NombreCorto</td>
+                                                            <td style="width:10%;"><a href="javascript:delTorneoFav('@c.Value');" class="fa fa-times fa-lg hand" title="Eliminar" bs-tooltip></a></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-xs-12" style="padding-top:15px;">
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12 pull-left">
+                                        <input id="txtBuscarTorneosFav" type="text" class="form-control" placeholder="Buscar mas Torneos" onkeyup="cargarTorneoFav()">
+                                    </div>
+
+                                </div>
+                                <div id="panelBuscarTorneos" class="row" style="margin-top:15px;">
+                                    <div class="col-md-12">
+                                        <div class="box-body table-responsive no-padding" style="z-index:-999;">
+                                            <div style="display:none;">
+                                                <table id="tableHeaderTorneos" class="table myTableHead">
+                                                    @*<caption class="mycaptionthead"><span></span><span style="font-size:x-small"></span></caption>*@
+                                                    <thead id="tbodyHeaderTorneos" class="mythead">
+                                                        <tr style="height: 30px;">
+                                                            <th class="col0" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+                                                            <th class="col1" style="width:70%; padding: 4px; padding-bottom:7px; text-align:left;"><span style="font-size:xx-small;">TORNEO</span></th>
+                                                            <th class="col2" style="width:10%; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;"></span></th>
+
+                                                        </tr>
+                                                    </thead>
+
+                                                </table>
+                                            </div>
+                                            <div style="height:150px; overflow:visible; overflow-y: scroll; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
+                                                <table id="tblmyDataTableTorneos" class="table myTable">
+                                                    <tbody id="tbodyTorneos">
+                                                        @if (Model != null)
+                                                        {
+                                                            foreach (var c in Model.ListaTorneos)
+                                                            {
+                                                                <tr id="trTorneosID_@c.Value">
+                                                                    <td style="width:10%; text-align:center; padding: 4px; background: url('/Imagenes/flags/@c.Imagen') no-repeat center left; padding-left: 20px; "><span style="display:none">@c.Imagen</span></td>
+                                                                    <td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">@c.NombreCorto</td>
+                                                                    <td style="width:10%;"><a href="javascript:addTorneosFav('@c.Value');" class="fa fa-plus fa-lg hand" title="Agregar" bs-tooltip></a></td>
+
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+@*Equipos Favoritos*@
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        evalPanelBuscarEquipos();
+    });
+
+    function evalPanelBuscarEquipos() {
+        const txtBuscarEquipoFav = document.getElementById("txtBuscarEquiposFav");
+        const inputStr = txtBuscarEquipoFav.value.toUpperCase();
+
+        if (isNullOrEmpty(inputStr))
+            document.getElementById('panelBuscarEquipos').style.display = "none";
+        else
+            document.getElementById('panelBuscarEquipos').style.display = "block";
+
+    }
+
+    function evaluaExisteEnColumnaFav(valor, col) {
+        var ret = false;
+        if (!isNullOrEmpty(valor)) {
+            if (col.indexOf(valor) > -1)
+                ret = true;
+        }
+        else {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    function evaluaExisteEnSeleccionFav(valor, listaTorneosvalues) {
+        var ret = false;
+        if (!isNullOrEmpty(listaTorneosvalues)) {
+            for (var i = 0; i = listaTorneosvalues.length - 1; i++) {
+                var obj = listaTorneosvalues[i];
+                if (obj.Text.indexOf(valor) > -1) {
+                    ret = true;
+                    break
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    function cargarEquiposFav() {
+        const txtBuscarEquipoFav = document.getElementById("txtBuscarEquiposFav");
+        const inputStr = txtBuscarEquipoFav.value.toUpperCase();
+
+        //Busca en tablaa
+        var t = document.getElementById("tblmyDataTableEquipos");
+        var trs = t.getElementsByTagName("tr");
+        var tds = null;
+
+        for (var i = 0; i < trs.length; i++) {
+            tds = trs[i].getElementsByTagName("td");
+
+            //var colTorneo = tds[0].getElementsByTagName("span")[0].innerText;
+            var colNomLocal = tds[1].innerHTML;
+
+            //var existeEnSelTorneo = evaluaExisteEnSeleccion(colTorneo, listaTorneosvalues);
+            var existeEnLocal = evaluaExisteEnColumnaFav(inputStr, colNomLocal);
+
+            if (existeEnLocal) {
+                trs[i].style.removeProperty('display');
+            }
+            else {
+                trs[i].style.display = 'none';
+            }
+        }
+        //fin busca en tabla
+
+        evalPanelBuscarEquipos();
+
+        //const dtProgramaHeader = document.getElementById('tableHeader');
+        //dtProgramaHeader.getElementsByTagName("span")[0].innerText = "Eventos: " + filaarray;
+        //dtProgramaHeader.getElementsByTagName("span")[1].innerText = " /  " + trs.length;
+
+
+    }
+
+    function addEquiposFav(codEquipo) {
+        var valValCuota = true; //validaValorCuota(CUOTA);
+        if (valValCuota == false) return false;
+        //$('#collapseThree').collapse('show');
+
+        var valRep = true; //valRepetidos(JUGADA, COD, CUOTA);
+        if (valRep == false) return false;
+
+        var tr = document.getElementById("trEquiposID_" + codEquipo);
+        var tds = tr.getElementsByTagName("td");
+        var colNomLocal = tds[1].innerHTML;
+        var imagen = tds[0].getElementsByTagName("span")[0].innerHTML;
+
+        var nuevoObj = [];
+        nuevoObj.push({
+            Text: colNomLocal,
+            Value: codEquipo,
+            Imagen: imagen
+        });
+
+        var contendor = $("#tbodyEquiposFav").html();
+        var nuevaFila = '<tr id=trEquiposFavID_' + nuevoObj[0].Value + '>';
+        /**/
+        nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style='display: none'>"+nuevoObj[0].Imagen+"</span>" + '</td>';
+    /**/
+    nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
+    nuevaFila += '<td style="width:10%;"><a href="javascript:delEquipoFav(' + nuevoObj[0].Value + ');" class="fa fa-times fa-lg hand" title="Eliminar" bs-tooltip></a></td>';
+    nuevaFila += '</tr>';
+    $("#tbodyEquiposFav").html(contendor + nuevaFila);
+
+    calcTotalEquipoFav();
+
+    delEquipo(codEquipo);
+
+    grabarEquipoFavDb(codEquipo, colNomLocal);
+
+}
+
+function addEquipos(nomEquipo, codEquipo, imagen) {
+    var valValCuota = true; //validaValorCuota(CUOTA);
+    if (valValCuota == false) return false;
+
+    var valRep = true; //valRepetidos(JUGADA, COD, CUOTA);
+    if (valRep == false) return false;
+
+    var nuevoObj = [];
+    nuevoObj.push({
+        Text: nomEquipo,
+        Value: codEquipo,
+        Imagen: imagen
+    });
+
+
+    var contendor = $("#tbodyEquipos").html();
+    var nuevaFila = '<tr id=trEquiposID_' + nuevoObj[0].Value + '>';
+    nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style='display: none'>" + nuevoObj[0].Imagen + "</span>" + '</td>';
+    nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
+    nuevaFila += '<td style="width:10%;"><a href="javascript:addEquiposFav(' + nuevoObj[0].Value + ');" class="fa fa-plus fa-lg hand" title="Agregar" bs-tooltip></a></td>';
+    nuevaFila += '</tr>';
+    $("#tbodyEquipos").html(contendor + nuevaFila);
+
+    calcTotalEquipoFav();
+
+}
+
+function delEquipoFav(cod) {
+    var id = 'trEquiposFavID_' + cod;
+    var tr = document.getElementById(id);
+    var table = tr.parentNode;
+
+    //antes de quitar de fav debe agregar a la lista de equipos
+    var td = tr.getElementsByTagName("td");
+    var nomEquipo = td[1].innerHTML;
+    var imagen = td[0].getElementsByTagName("span")[0].innerHTML;
+
+    addEquipos(nomEquipo, cod, imagen);
+    //////
+
+    table.removeChild(tr);
+
+    calcTotalEquipoFav();
+
+    cargarTorneoFav();
+
+    eliminarEquipoFavDb(cod);
+
+}
+
+function delEquipo(cod) {
+    var id = 'trEquiposID_' + cod;
+    var tr = document.getElementById(id);
+    var table = tr.parentNode;
+    table.removeChild(tr);
+
+    calcTotalEquipoFav();
+
+    //if (table.rows.length == 0)
+    //    $('#collapseThree').collapse('hide');
+}
+
+function calcTotalEquipoFav() {
+    const mylistaEquiposFav = document.getElementById('mylistaEquiposFav');
+    $("#lblTotalFav").html(mylistaEquiposFav.rows.length);
+}
+
+function grabarEquipoFavDb(cod, desc) {
+    var dataObject = JSON.stringify({
+        'Text': desc,
+        'Value': cod,
+    });
+
+    $.ajax({
+        url: '/Home/GrabarEquipoFav/',
+        data: dataObject,
+        contentType: 'application/json',
+        type: 'POST',
+        success: function (data) {
+            if (data == "true") {
+                $("#txtBuscarEquiposFav").val("");
+                //var myurl = '/Home/Index/';
+                //window.location.href = myurl;
+            }
+            else {
+                alert("Result: " + data);
+            }
+        }
+    });
+
+}
+
+function eliminarEquipoFavDb(cod, desc) {
+    var dataObject = JSON.stringify({
+        'Text': desc,
+        'Value': cod,
+    });
+
+    $.ajax({
+        url: '/Home/EliminarEquipoFav/',
+        data: dataObject,
+        contentType: 'application/json',
+        type: 'POST',
+        success: function (data) {
+            if (data == "true") {
+                //$("#txtMensaje").val("");
+                //alert("Su comentario se envió con éxito.");
+
+                //var myurl = '/Home/Index/';
+                //window.location.href = myurl;
+            }
+            else {
+                alert("Result: " + data);
+            }
+        }
+    });
+
+}
+
+</script>
+
+
+@*Torneos Favoritos*@
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        evalPanelBuscarTorneos();
+    });
+
+    function evalPanelBuscarTorneos() {
+        const txtBuscarTorneoFav = document.getElementById("txtBuscarTorneosFav");
+        const inputStr = txtBuscarTorneoFav.value.toUpperCase();
+
+        if (isNullOrEmpty(inputStr))
+            document.getElementById('panelBuscarTorneos').style.display = "none";
+        else
+            document.getElementById('panelBuscarTorneos').style.display = "block";
+
+    }
+
+    function evaluaExisteEnColumnaFav(valor, col) {
+        var ret = false;
+        if (!isNullOrEmpty(valor)) {
+            if (col.indexOf(valor) > -1)
+                ret = true;
+        }
+        else {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    function evaluaExisteEnSeleccionFav(valor, listaTorneosvalues) {
+        var ret = false;
+        if (!isNullOrEmpty(listaTorneosvalues)) {
+            for (var i = 0; i = listaTorneosvalues.length - 1; i++) {
+                var obj = listaTorneosvalues[i];
+                if (obj.Text.indexOf(valor) > -1) {
+                    ret = true;
+                    break
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    function cargarTorneoFav() {
+        const txtBuscarTorneoFav = document.getElementById("txtBuscarTorneosFav");
+        const inputStr = txtBuscarTorneoFav.value.toUpperCase();
+
+        //Busca en tablaa
+        var t = document.getElementById("tblmyDataTableTorneos");
+        var trs = t.getElementsByTagName("tr");
+        var tds = null;
+
+        for (var i = 0; i < trs.length; i++) {
+            tds = trs[i].getElementsByTagName("td");
+
+            //var colTorneo = tds[0].getElementsByTagName("span")[0].innerText;
+            var colNomLocal = tds[1].innerHTML;
+
+            //var existeEnSelTorneo = evaluaExisteEnSeleccion(colTorneo, listaTorneosvalues);
+            var existeEnLocal = evaluaExisteEnColumnaFav(inputStr, colNomLocal);
+
+            if (existeEnLocal) {
+                trs[i].style.removeProperty('display');
+            }
+            else {
+                trs[i].style.display = 'none';
+            }
+        }
+        //fin busca en tabla
+
+        evalPanelBuscarTorneos();
+
+        //const dtProgramaHeader = document.getElementById('tableHeader');
+        //dtProgramaHeader.getElementsByTagName("span")[0].innerText = "Eventos: " + filaarray;
+        //dtProgramaHeader.getElementsByTagName("span")[1].innerText = " /  " + trs.length;
+
+
+    }
+
+    function addTorneosFav(codTorneo) {
+        var valValCuota = true; //validaValorCuota(CUOTA);
+        if (valValCuota == false) return false;
+        //$('#collapseThree').collapse('show');
+
+        var valRep = true; //valRepetidos(JUGADA, COD, CUOTA);
+        if (valRep == false) return false;
+
+        var tr = document.getElementById("trTorneosID_" + codTorneo);
+        var tds = tr.getElementsByTagName("td");
+        var colNomLocal = tds[1].innerHTML;
+        var imagen = tds[0].getElementsByTagName("span")[0].innerHTML;
+
+        var nuevoObj = [];
+        nuevoObj.push({
+            Text: colNomLocal,
+            Value: codTorneo,
+            Imagen: imagen
+        });
+
+        var contendor = $("#tbodyTorneosFav").html();
+        var nuevaFila = '<tr id=trTorenosFavID_' + nuevoObj[0].Value + '>';
+        nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style=display:none;>" + nuevoObj[0].Imagen+"</span>" + '</td>';
+        nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
+        nuevaFila += '<td style="width:10%;"><a href="javascript:delTorneoFav(' + nuevoObj[0].Value + ');" class="fa fa-times fa-lg hand" title="Eliminar" bs-tooltip></a></td>';
+        nuevaFila += '</tr>';
+        $("#tbodyTorneosFav").html(contendor + nuevaFila);
+
+        calcTotalTorneoFav();
+
+        delTorneo(codTorneo);
+
+        grabarTorneoFavDb(codTorneo, colNomLocal);
+
+    }
+
+    function addTorneos(nomTorneo, codTorneo, imagen) {
+        var valValCuota = true; //validaValorCuota(CUOTA);
+        if (valValCuota == false) return false;
+
+        var valRep = true; //valRepetidos(JUGADA, COD, CUOTA);
+        if (valRep == false) return false;
+
+        var tr = document.getElementById("trTorneosFavID_" + codTorneo);
+        var tds = tr.getElementsByTagName("td");
+        var colNomLocal = tds[1].innerHTML;
+
+        var nuevoObj = [];
+        nuevoObj.push({
+            Text: nomTorneo,
+            Value: codTorneo,
+            Imagen: imagen
+        });
+
+
+        var contendor = $("#tbodyTorneos").html();
+        var nuevaFila = '<tr id=trTorneosID_' + nuevoObj[0].Value + '>';
+        nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style='display: none'>" + nuevoObj[0].Imagen + "</span>" + '</td>';
+        nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
+        nuevaFila += '<td style="width:10%;"><a href="javascript:addTorneosFav(' + nuevoObj[0].Value + ');" class="fa fa-plus fa-lg hand" title="Agregar" bs-tooltip></a></td>';
+        nuevaFila += '</tr>';
+        $("#tbodyTorneos").html(contendor + nuevaFila);
+
+        calcTotalTorneoFav();
+
+    }
+
+    function delTorneoFav(cod) {
+        var id = 'trTorneosFavID_' + cod;
+        var tr = document.getElementById(id);
+        var table = tr.parentNode;
+
+        //antes de quitar de fav debe agregar a la lista de Torneos
+        var td = tr.getElementsByTagName("td");
+        var nomTorneo = td[1].innerHTML;
+        var imagen = td[0].getElementsByTagName("span")[0].innerHTML;
+
+        addTorneos(nomTorneo, cod, imagen);
+        //////
+
+        table.removeChild(tr);
+
+        calcTotalTorneoFav();
+
+        cargarTorneoFav();
+
+        eliminarTorneoFavDb(cod);
+
+    }
+
+    function delTorneo(cod) {
+        var id = 'trTorneosID_' + cod;
+        var tr = document.getElementById(id);
+        var table = tr.parentNode;
+        table.removeChild(tr);
+
+        calcTotalTorneoFav();
+
+        //if (table.rows.length == 0)
+        //    $('#collapseThree').collapse('hide');
+    }
+
+    function calcTotalTorneoFav() {
+        const mylistaTorneosFav = document.getElementById('mylistaTorneosFav');
+        $("#lblTotalFav").html(mylistaTorneosFav.rows.length);
+    }
+
+    function grabarTorneoFavDb(cod, desc) {
+        var dataObject = JSON.stringify({
+            'Text': desc,
+            'Value': cod,
+        });
+
+        $.ajax({
+            url: '/Home/GrabarTorneoFav/',
+            data: dataObject,
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (data) {
+                if (data == "true") {
+                    $("#txtBuscarTorneosFav").val("");
+                    //var myurl = '/Home/Index/';
+                    //window.location.href = myurl;
+                }
+                else {
+                    alert("Result: " + data);
+                }
+            }
+        });
+
+    }
+
+    function eliminarTorneoFavDb(cod, desc) {
+        debugger;
+        var dataObject = JSON.stringify({
+            'Text': desc,
+            'Value': cod,
+        });
+
+        $.ajax({
+            url: '/Home/EliminarTorneoFav/',
+            data: dataObject,
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (data) {
+                if (data == "true") {
+                    //$("#txtMensaje").val("");
+                    //alert("Su comentario se envió con éxito.");
+
+                    //var myurl = '/Home/Index/';
+                    //window.location.href = myurl;
+                }
+                else {
+                    alert("Result: " + data);
+                }
+            }
+        });
+
+    }
+
+</script>

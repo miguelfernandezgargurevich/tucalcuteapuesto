@@ -7,26 +7,24 @@ using System.Data;
 using TuCalcuTeApuesto.Models;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
-using System.Net.Mail;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using System.Text;
 using System.Configuration;
+using TuCalcuTeApuesto.DataAccess;
 
 namespace TuCalcuTeApuesto.Controllers
 {
     public class HomeController : Controller
     {
-        
+        dbTuCalcuEntities _db;
+
         public ActionResult Index(string f)
 
         {
-            
             CrearArchivos();
-
             ListaModel listaFinal = CargaDataModelo(f);
-            
+
             return View(listaFinal);
         }
 
@@ -44,49 +42,38 @@ namespace TuCalcuTeApuesto.Controllers
         }
 
         [HttpPost]
-        public string EnviarComentario(ComentarioModel Comentario)
+        public string EnviarComentario(ComentarioModel model)
         {
+            var rpta = "true";
             try
             {
-                var nombre = Comentario.Nombre;
-                var mensaje = Comentario.Mensaje;
-                var rpta = "true";
+                Comentarios entidad = new Comentarios();
+                entidad.DesComentario = model.Mensaje;
+                entidad.FechaCreacion = DateTime.Now;
+                entidad.Puntaje = model.Puntaje;
+                entidad.CodUsuario = string.Empty;
 
-                MailModel objCorreo = new MailModel();
-                objCorreo.To = "miguel.gargurevich@gmail.com";
-                objCorreo.From = "miguel.gargurevich@gmail.com";
-                objCorreo.Subject = "Comentario de la calculadora TeApuesto: " + Comentario.Nombre;
-                objCorreo.Body = mensaje;
-
-                MailMessage msg = new MailMessage();
-
-                msg.From = new MailAddress(objCorreo.From);
-                msg.To.Add(objCorreo.To);
-                msg.Subject = objCorreo.Subject;
-                msg.Body = objCorreo.Body;
-                //msg.Priority = MailPriority.High;
-
-
-                using (SmtpClient client = new SmtpClient())
+                bool isAuth = User.Identity.IsAuthenticated;
+                if (isAuth)
                 {
-                    client.EnableSsl = true;
-                    client.UseDefaultCredentials = false;
-                    client.Credentials = new NetworkCredential("miguel.gargurevich@gmail.com", "Zlatan2016");
-                    client.Host = "smtp.gmail.com";
-                    client.Port = 587;
-                    client.DeliveryMethod = SmtpDeliveryMethod.Network;
-
-                    client.Send(msg);
+                    _db = new dbTuCalcuEntities();
+                    AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
+                    entidad.CodUsuario = user.Id;
                 }
+
+                ComentarioDA _da = new ComentarioDA();
+                _da.GrabarComentario(entidad);
 
                 return rpta;
 
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                Response.StatusCode = (int)System.Net.HttpStatusCode.BadRequest;
-                return ex.Message;
+                rpta = CapturarError(e, "HomeController", "EnviarComentario");
+                return "false";
+
             }
+
         }
 
         public ActionResult Privacy()
@@ -108,7 +95,167 @@ namespace TuCalcuTeApuesto.Controllers
             return View();
         }
 
+        #region "Equipos Favoritos"
+ 
+        [HttpPost]
+        public string EliminarEquipoFav(EquiposFavModel model)
+        {
+            var rpta = "true";
+            try
+            {
+                bool isAuth = User.Identity.IsAuthenticated;
+                if (isAuth)
+                {
+                    _db = new dbTuCalcuEntities();
+                    AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
+
+                    EquiposFavoritos entidad = new EquiposFavoritos();
+                    entidad.CodEquipo = model.Value;
+                    entidad.CodUsuario = user.Id;
+
+                    EquiposFavDA _da = new EquiposFavDA();
+                    _da.EliminarEquipoFav(entidad);
+
+                }
+
+                return rpta;
+
+            }
+            catch (Exception e)
+            {
+                rpta = CapturarError(e, "HomeController", "EliminarEquipoFav");
+                return "false";
+                //return View("ERROR");
+
+            }
+        }
+
+        [HttpPost]
+        public string GrabarEquipoFav(EquiposFavModel model)
+        {
+            var rpta = "true";
+            try
+            {
+                bool isAuth = User.Identity.IsAuthenticated;
+                if (isAuth)
+                {
+                    _db = new dbTuCalcuEntities();
+                    AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
+
+                    EquiposFavoritos entidad = new EquiposFavoritos();
+                    entidad.CodEquipo = model.Value;
+                    entidad.CodUsuario = user.Id;
+
+                    EquiposFavDA _da = new EquiposFavDA();
+                    _da.GrabarEquipoFav(entidad);
+                }
+
+                return rpta;
+
+            }
+            catch (Exception e)
+            {
+                rpta = CapturarError(e, "HomeController", "EliminarEquipoFav");
+                return "false";
+
+            }
+        }
+
+        #endregion
+
+        #region "Equipos Favoritos"
+
+        [HttpPost]
+        public string EliminarTorneoFav(TorneosFavModel model)
+        {
+            var rpta = "true";
+            try
+            {
+                bool isAuth = User.Identity.IsAuthenticated;
+                if (isAuth)
+                {
+                    _db = new dbTuCalcuEntities();
+                    AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
+
+                    TorneosFavoritos entidad = new TorneosFavoritos();
+                    entidad.CodTorneo = model.Value;
+                    entidad.CodUsuario = user.Id;
+
+                    TorneosFavDA _da = new TorneosFavDA();
+                    _da.EliminarTorneoFav(entidad);
+
+                }
+
+                return rpta;
+
+            }
+            catch (Exception e)
+            {
+                rpta = CapturarError(e, "HomeController", "EliminarTorneoFav");
+                return "false";
+                //return View("ERROR");
+
+            }
+        }
+
+        [HttpPost]
+        public string GrabarTorneoFav(TorneosFavModel model)
+        {
+            var rpta = "true";
+            try
+            {
+                bool isAuth = User.Identity.IsAuthenticated;
+                if (isAuth)
+                {
+                    _db = new dbTuCalcuEntities();
+                    AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
+
+                    TorneosFavoritos entidad = new TorneosFavoritos();
+                    entidad.CodTorneo = model.Value;
+                    entidad.CodUsuario = user.Id;
+
+                    TorneosFavDA _da = new TorneosFavDA();
+                    _da.GrabarTorneoFav(entidad);
+                }
+
+                return rpta;
+
+            }
+            catch (Exception e)
+            {
+                rpta = CapturarError(e, "HomeController", "EliminarTorneoFav");
+                return "false";
+
+            }
+        }
+
+        #endregion
+
         #region "Metodos"
+
+        public string CapturarError(Exception error, string controlador = "", string accion = "")
+        {
+            var msg = error.Message;
+            if (error.InnerException != null)
+            {
+                msg = msg + "/;/" + error.InnerException.Message;
+                if (error.InnerException.InnerException != null)
+                {
+                    msg = msg + "/;/" + error.InnerException.InnerException.Message;
+                    if (error.InnerException.InnerException.InnerException != null)
+                        msg = msg + "/;/" + error.InnerException.InnerException.InnerException.Message;
+                }
+            }
+
+
+            var comentario = $@"Se ejecutó la accion: [{controlador}/{accion}] - MensajeError: {msg}";
+            var logErrorFinal = string.Format("{0} | {1}", comentario, error.StackTrace);
+            //log.ErrorFormat("{0} | {1}", comentario, error.StackTrace);
+
+            ViewBag.ErrorMessage = logErrorFinal;
+            
+            return string.Format(logErrorFinal);
+        }
 
         public void CrearArchivos()
         {
@@ -143,7 +290,7 @@ namespace TuCalcuTeApuesto.Controllers
                 {
                     ExtractTextFromPdf(path);
                 }
-                
+
                 ////crea files
                 //ExtractTextFromPdf(path);
             }
@@ -158,9 +305,13 @@ namespace TuCalcuTeApuesto.Controllers
             List<int> listaCabecerasFav = new List<int>();
             List<int> listaCabecerasMin = new List<int>();
             List<CabeceraModel> listaCabeceras = new List<CabeceraModel>();
-            List<TorneoModel> listaTorneos = new List<TorneoModel>();
+            List<TorneoModel> listaTorneosHoy = new List<TorneoModel>();
             List<FileModel> listaFileModel = new List<FileModel>();
             FileModel fileModel = new FileModel();
+            List<EquiposFavModel> listaEquiposFav = new List<EquiposFavModel>();
+            List<EquiposModel> listaEquipos = new List<EquiposModel>();
+            List<TorneosFavModel> listaTorneosFav = new List<TorneosFavModel>();
+            List<TorneoModel> listaTorneos = new List<TorneoModel>();
 
             System.IO.DirectoryInfo directory = new System.IO.DirectoryInfo(pathCarpeta);
             List<FileInfo> listaFileInfo = directory.GetFiles().ToList();
@@ -210,21 +361,70 @@ namespace TuCalcuTeApuesto.Controllers
 
                 List<string> lstFinal = FormateaData(rutaCompleta);
 
-                DataTable dt = FormateaDataFinal(lstFinal, ref listaCabeceras, ref listaTorneos, ref listaCabecerasFav, ref listaCabecerasMin);
+                DataTable dt = FormateaDataFinal(lstFinal, ref listaCabeceras, ref listaTorneosHoy, ref listaCabecerasFav, ref listaCabecerasMin);
                 listaFinal = CargarListaFinal(dt);
 
             }
 
+            //Favoritos
+            bool isAuth = User.Identity.IsAuthenticated;
+            if (isAuth)
+            {
+                //Usuarios
+                UsuariosDA _daUsuarios = new UsuariosDA();
+                UsuariosModel user = _daUsuarios.ObtenerUsuario(User.Identity.Name);
+
+                //Equipos
+                EquiposFavDA _daEquiposFav = new EquiposFavDA();
+                listaEquiposFav = _daEquiposFav.ListarEquiposFavoritos(user.Id);
+
+                EquiposDA _daEquipos = new EquiposDA();
+                listaEquipos = _daEquipos.ListarEquipos();
+
+                //elimina los favoritos de la lista final
+                foreach (var item in listaEquiposFav) {
+                    var codEquipoFav = Convert.ToInt32(item.Value);
+                    EquiposModel resultFind = listaEquipos.Where(x => x.Value == codEquipoFav).FirstOrDefault();
+                    if (resultFind != null)
+                    {
+                        listaEquipos.Remove(resultFind);
+                    }
+                }
+
+                //Torneos
+                TorneosFavDA _daTorneosFav = new TorneosFavDA();
+                listaTorneosFav = _daTorneosFav.ListarTorneosFavoritos(user.Id);
+
+                TorneosDA _daTorneos = new TorneosDA();
+                listaTorneos = _daTorneos.ListarTorneos();
+
+                //elimina los favoritos de la lista final
+                foreach (var item in listaTorneosFav)
+                {
+                    var codEquipoFav = Convert.ToInt32(item.Value);
+                    TorneoModel resultFind = listaTorneos.Where(x => x.Value == codEquipoFav).FirstOrDefault();
+                    if (resultFind != null)
+                    {
+                        listaTorneos.Remove(resultFind);
+                    }
+                }
+            }
+
+            //Final
             listaFinal.ListaCabeceras = listaCabeceras;
-            listaFinal.ListaTorneos = listaTorneos;
+            listaFinal.ListaTorneosHoy = listaTorneosHoy;
             listaFinal.ListaCabecerasFav = listaCabecerasFav;
             listaFinal.ListaCabecerasMin = listaCabecerasMin;
             listaFinal.ListaFiles = listaFileModel;
             listaFinal.Archivo = fileModel;
+            listaFinal.ListaEquiposFav = listaEquiposFav;
+            listaFinal.ListaEquipos = listaEquipos;
+            listaFinal.ListaTorneosFav = listaTorneosFav;
+            listaFinal.ListaTorneos = listaTorneos;
 
             return listaFinal;
         }
-
+        
         public string GetDia(DateTime fecha)
         {
             switch (fecha.DayOfWeek)
@@ -1175,7 +1375,7 @@ namespace TuCalcuTeApuesto.Controllers
 
                                 row["Codigo"] = codigo;
                                 row["Nombre"] = line;
-                                row["Descripcion"] = nombreProg.Replace(" ", "|").Replace("Á","A").Replace("É", "E").Replace("Í", "I").Replace("Ó", "O").Replace("Ú", "U");
+                                row["Descripcion"] = nombreProg.Replace(" ", "|").Replace("Á", "A").Replace("É", "E").Replace("Í", "I").Replace("Ó", "O").Replace("Ú", "U");
                                 row["Fecha"] = GetFechaPrograma(fechaProg);
                                 listaFinal.Rows.Add(row);
                             }
@@ -1214,7 +1414,7 @@ namespace TuCalcuTeApuesto.Controllers
                     }
 
                     //PARA SSIS
-                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS", ".txt");
+                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS-", ".txt");
                     var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
 
                     using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
@@ -1230,7 +1430,8 @@ namespace TuCalcuTeApuesto.Controllers
             }
             catch (Exception e)
             {
-                ViewBag.ErrorMessage = e.Message.ToString();
+                CapturarError(e, "ExtractTExtFromPdf");
+                //ViewBag.ErrorMessage = e.Message.ToString();
                 //ret = false;
             }
         }

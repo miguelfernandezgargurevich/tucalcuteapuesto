@@ -22,6 +22,7 @@ namespace TuCalcuTeApuesto
     
         public int CodEquipo { get; set; }
         public string DesEquipo { get; set; }
+        public string Flag { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<EquiposFavoritos> EquiposFavoritos { get; set; }

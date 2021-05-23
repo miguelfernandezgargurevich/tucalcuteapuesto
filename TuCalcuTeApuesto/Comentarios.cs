@@ -12,12 +12,12 @@ namespace TuCalcuTeApuesto
     using System;
     using System.Collections.Generic;
     
-    public partial class EquiposFavoritos
+    public partial class Comentarios
     {
-        public int CodEquipoFavorito { get; set; }
+        public int IdComentario { get; set; }
         public string CodUsuario { get; set; }
-        public Nullable<int> CodEquipo { get; set; }
-    
-        public virtual Equipos Equipos { get; set; }
+        public string DesComentario { get; set; }
+        public Nullable<int> Puntaje { get; set; }
+        public Nullable<System.DateTime> FechaCreacion { get; set; }
     }
 }

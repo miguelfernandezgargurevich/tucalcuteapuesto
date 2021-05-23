@@ -70,19 +70,30 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <Property Name="AccessFailedCount" Type="int" Nullable="false" />
           <Property Name="UserName" Type="nvarchar" MaxLength="256" Nullable="false" />
         </EntityType>
+        <EntityType Name="Comentarios">
+          <Key>
+            <PropertyRef Name="IdComentario" />
+          </Key>
+          <Property Name="IdComentario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodUsuario" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DesComentario" Type="nvarchar(max)" />
+          <Property Name="Puntaje" Type="int" />
+          <Property Name="FechaCreacion" Type="datetime" />
+        </EntityType>
         <EntityType Name="Equipos">
           <Key>
             <PropertyRef Name="CodEquipo" />
           </Key>
           <Property Name="CodEquipo" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="DesEquipo" Type="nvarchar" MaxLength="500" />
+          <Property Name="Flag" Type="nvarchar" MaxLength="500" />
         </EntityType>
         <EntityType Name="EquiposFavoritos">
           <Key>
             <PropertyRef Name="CodEquipoFavorito" />
           </Key>
-          <Property Name="CodEquipoFavorito" Type="int" Nullable="false" />
-          <Property Name="CodUsuario" Type="int" />
+          <Property Name="CodEquipoFavorito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodUsuario" Type="nvarchar(max)" />
           <Property Name="CodEquipo" Type="int" />
         </EntityType>
         <EntityType Name="Programas">
@@ -164,7 +175,7 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
             <PropertyRef Name="CodTorneoFavorito" />
           </Key>
           <Property Name="CodTorneoFavorito" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-          <Property Name="CodUsuario" Type="int" />
+          <Property Name="CodUsuario" Type="nvarchar(max)" />
           <Property Name="CodTorneo" Type="int" />
         </EntityType>
         <EntityType Name="Usuarios">
@@ -259,18 +270,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_EquiposFavoritos_Usuarios">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="CodUsuario" />
-            </Principal>
-            <Dependent Role="EquiposFavoritos">
-              <PropertyRef Name="CodUsuario" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ProgramaDetalle_Programa">
           <End Role="Programas" Type="Self.Programas" Multiplicity="0..1" />
           <End Role="ProgramasDetalle" Type="Self.ProgramasDetalle" Multiplicity="*" />
@@ -292,18 +291,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
             </Principal>
             <Dependent Role="TorneosFavoritos">
               <PropertyRef Name="CodTorneo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TorneosFavoritos_Usuarios">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="CodUsuario" />
-            </Principal>
-            <Dependent Role="TorneosFavoritos">
-              <PropertyRef Name="CodUsuario" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -349,6 +336,7 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogins" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Comentarios" EntityType="Self.Comentarios" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Equipos" EntityType="Self.Equipos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="EquiposFavoritos" EntityType="Self.EquiposFavoritos" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Programas" EntityType="Self.Programas" Schema="dbo" store:Type="Tables" />
@@ -386,20 +374,12 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
             <End Role="Equipos" EntitySet="Equipos" />
             <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
           </AssociationSet>
-          <AssociationSet Name="FK_EquiposFavoritos_Usuarios" Association="Self.FK_EquiposFavoritos_Usuarios">
-            <End Role="Usuarios" EntitySet="Usuarios" />
-            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
-          </AssociationSet>
           <AssociationSet Name="FK_ProgramaDetalle_Programa" Association="Self.FK_ProgramaDetalle_Programa">
             <End Role="Programas" EntitySet="Programas" />
             <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
           </AssociationSet>
           <AssociationSet Name="FK_TorneosFavoritos_Torneos" Association="Self.FK_TorneosFavoritos_Torneos">
             <End Role="Torneos" EntitySet="Torneos" />
-            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TorneosFavoritos_Usuarios" Association="Self.FK_TorneosFavoritos_Usuarios">
-            <End Role="Usuarios" EntitySet="Usuarios" />
             <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
           </AssociationSet>
           <AssociationSet Name="FK_UsuarioJugada_Programa" Association="Self.FK_UsuarioJugada_Programa">
@@ -425,17 +405,8 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           </Key>
           <Property Name="CodEquipo" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="DesEquipo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="EquiposFavoritos" Relationship="Self.FK_EquiposFavoritos_Equipos" FromRole="Equipos" ToRole="EquiposFavoritos" />
-        </EntityType>
-        <EntityType Name="EquiposFavoritos">
-          <Key>
-            <PropertyRef Name="CodEquipoFavorito" />
-          </Key>
-          <Property Name="CodEquipoFavorito" Type="Int32" Nullable="false" />
-          <Property Name="CodUsuario" Type="Int32" />
-          <Property Name="CodEquipo" Type="Int32" />
-          <NavigationProperty Name="Equipos" Relationship="Self.FK_EquiposFavoritos_Equipos" FromRole="EquiposFavoritos" ToRole="Equipos" />
-          <NavigationProperty Name="Usuarios" Relationship="Self.FK_EquiposFavoritos_Usuarios" FromRole="EquiposFavoritos" ToRole="Usuarios" />
+          <NavigationProperty Name="EquiposFavoritos" Relationship="dbTuCalcuModel.FK_EquiposFavoritos_Equipos" FromRole="Equipos" ToRole="EquiposFavoritos" />
+          <Property Name="Flag" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Programas">
           <Key>
@@ -514,17 +485,7 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <Property Name="DesTorneo" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="NombreCorto" Type="String" MaxLength="50" FixedLength="true" Unicode="true" />
           <Property Name="Flag" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="TorneosFavoritos" Relationship="Self.FK_TorneosFavoritos_Torneos" FromRole="Torneos" ToRole="TorneosFavoritos" />
-        </EntityType>
-        <EntityType Name="TorneosFavoritos">
-          <Key>
-            <PropertyRef Name="CodTorneoFavorito" />
-          </Key>
-          <Property Name="CodTorneoFavorito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="CodUsuario" Type="Int32" />
-          <Property Name="CodTorneo" Type="Int32" />
-          <NavigationProperty Name="Torneos" Relationship="Self.FK_TorneosFavoritos_Torneos" FromRole="TorneosFavoritos" ToRole="Torneos" />
-          <NavigationProperty Name="Usuarios" Relationship="Self.FK_TorneosFavoritos_Usuarios" FromRole="TorneosFavoritos" ToRole="Usuarios" />
+          <NavigationProperty Name="TorneosFavoritos" Relationship="dbTuCalcuModel.FK_TorneosFavoritos_Torneos" FromRole="Torneos" ToRole="TorneosFavoritos" />
         </EntityType>
         <EntityType Name="Usuarios">
           <Key>
@@ -537,8 +498,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <Property Name="Correo" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="Telefono" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Name="Password" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="EquiposFavoritos" Relationship="Self.FK_EquiposFavoritos_Usuarios" FromRole="Usuarios" ToRole="EquiposFavoritos" />
-          <NavigationProperty Name="TorneosFavoritos" Relationship="Self.FK_TorneosFavoritos_Usuarios" FromRole="Usuarios" ToRole="TorneosFavoritos" />
           <NavigationProperty Name="UsuariosJugadas" Relationship="Self.FK_UsuarioJugada_Usuarios" FromRole="Usuarios" ToRole="UsuariosJugadas" />
         </EntityType>
         <EntityType Name="UsuariosJugadas">
@@ -556,30 +515,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <NavigationProperty Name="ProgramasDetalle" Relationship="Self.FK_UsuarioJugada_ProgramaDetalle" FromRole="UsuariosJugadas" ToRole="ProgramasDetalle" />
           <NavigationProperty Name="Usuarios" Relationship="Self.FK_UsuarioJugada_Usuarios" FromRole="UsuariosJugadas" ToRole="Usuarios" />
         </EntityType>
-        <Association Name="FK_EquiposFavoritos_Equipos">
-          <End Role="Equipos" Type="Self.Equipos" Multiplicity="0..1" />
-          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Equipos">
-              <PropertyRef Name="CodEquipo" />
-            </Principal>
-            <Dependent Role="EquiposFavoritos">
-              <PropertyRef Name="CodEquipo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_EquiposFavoritos_Usuarios">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-          <End Role="EquiposFavoritos" Type="Self.EquiposFavoritos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="CodUsuario" />
-            </Principal>
-            <Dependent Role="EquiposFavoritos">
-              <PropertyRef Name="CodUsuario" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_ProgramaDetalle_Programa">
           <End Role="Programas" Type="Self.Programas" Multiplicity="0..1" />
           <End Role="ProgramasDetalle" Type="Self.ProgramasDetalle" Multiplicity="*" />
@@ -616,30 +551,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_TorneosFavoritos_Torneos">
-          <End Role="Torneos" Type="Self.Torneos" Multiplicity="0..1" />
-          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Torneos">
-              <PropertyRef Name="CodTorneo" />
-            </Principal>
-            <Dependent Role="TorneosFavoritos">
-              <PropertyRef Name="CodTorneo" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_TorneosFavoritos_Usuarios">
-          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="0..1" />
-          <End Role="TorneosFavoritos" Type="Self.TorneosFavoritos" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Usuarios">
-              <PropertyRef Name="CodUsuario" />
-            </Principal>
-            <Dependent Role="TorneosFavoritos">
-              <PropertyRef Name="CodUsuario" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UsuarioJugada_Usuarios">
           <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
           <End Role="UsuariosJugadas" Type="Self.UsuariosJugadas" Multiplicity="*" />
@@ -654,22 +565,12 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
         </Association>
         <EntityContainer Name="dbTuCalcuEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Equipos" EntityType="Self.Equipos" />
-          <EntitySet Name="EquiposFavoritos" EntityType="Self.EquiposFavoritos" />
           <EntitySet Name="Programas" EntityType="Self.Programas" />
           <EntitySet Name="ProgramasDetalle" EntityType="Self.ProgramasDetalle" />
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
           <EntitySet Name="Torneos" EntityType="Self.Torneos" />
-          <EntitySet Name="TorneosFavoritos" EntityType="Self.TorneosFavoritos" />
           <EntitySet Name="Usuarios" EntityType="Self.Usuarios" />
           <EntitySet Name="UsuariosJugadas" EntityType="Self.UsuariosJugadas" />
-          <AssociationSet Name="FK_EquiposFavoritos_Equipos" Association="Self.FK_EquiposFavoritos_Equipos">
-            <End Role="Equipos" EntitySet="Equipos" />
-            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
-          </AssociationSet>
-          <AssociationSet Name="FK_EquiposFavoritos_Usuarios" Association="Self.FK_EquiposFavoritos_Usuarios">
-            <End Role="Usuarios" EntitySet="Usuarios" />
-            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
-          </AssociationSet>
           <AssociationSet Name="FK_ProgramaDetalle_Programa" Association="Self.FK_ProgramaDetalle_Programa">
             <End Role="Programas" EntitySet="Programas" />
             <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
@@ -681,14 +582,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <AssociationSet Name="FK_UsuarioJugada_ProgramaDetalle" Association="Self.FK_UsuarioJugada_ProgramaDetalle">
             <End Role="ProgramasDetalle" EntitySet="ProgramasDetalle" />
             <End Role="UsuariosJugadas" EntitySet="UsuariosJugadas" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TorneosFavoritos_Torneos" Association="Self.FK_TorneosFavoritos_Torneos">
-            <End Role="Torneos" EntitySet="Torneos" />
-            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
-          </AssociationSet>
-          <AssociationSet Name="FK_TorneosFavoritos_Usuarios" Association="Self.FK_TorneosFavoritos_Usuarios">
-            <End Role="Usuarios" EntitySet="Usuarios" />
-            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
           </AssociationSet>
           <AssociationSet Name="FK_UsuarioJugada_Usuarios" Association="Self.FK_UsuarioJugada_Usuarios">
             <End Role="Usuarios" EntitySet="Usuarios" />
@@ -710,6 +603,17 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <AssociationSet Name="AspNetUserRoles" Association="dbTuCalcuModel.AspNetUserRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+          </AssociationSet>
+          <EntitySet Name="Comentarios" EntityType="dbTuCalcuModel.Comentarios" />
+          <EntitySet Name="EquiposFavoritos" EntityType="dbTuCalcuModel.EquiposFavoritos" />
+          <AssociationSet Name="FK_EquiposFavoritos_Equipos" Association="dbTuCalcuModel.FK_EquiposFavoritos_Equipos">
+            <End Role="Equipos" EntitySet="Equipos" />
+            <End Role="EquiposFavoritos" EntitySet="EquiposFavoritos" />
+          </AssociationSet>
+          <EntitySet Name="TorneosFavoritos" EntityType="dbTuCalcuModel.TorneosFavoritos" />
+          <AssociationSet Name="FK_TorneosFavoritos_Torneos" Association="dbTuCalcuModel.FK_TorneosFavoritos_Torneos">
+            <End Role="Torneos" EntitySet="Torneos" />
+            <End Role="TorneosFavoritos" EntitySet="TorneosFavoritos" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="AspNetRoles">
@@ -805,6 +709,58 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <End Type="dbTuCalcuModel.AspNetRoles" Role="AspNetRoles" Multiplicity="*" />
           <End Type="dbTuCalcuModel.AspNetUsers" Role="AspNetUsers" Multiplicity="*" />
         </Association>
+        <EntityType Name="Comentarios">
+          <Key>
+            <PropertyRef Name="IdComentario" />
+          </Key>
+          <Property Name="IdComentario" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodUsuario" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DesComentario" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Puntaje" Type="Int32" />
+          <Property Name="FechaCreacion" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="EquiposFavoritos">
+          <Key>
+            <PropertyRef Name="CodEquipoFavorito" />
+          </Key>
+          <Property Name="CodEquipoFavorito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodUsuario" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CodEquipo" Type="Int32" />
+          <NavigationProperty Name="Equipos" Relationship="dbTuCalcuModel.FK_EquiposFavoritos_Equipos" FromRole="EquiposFavoritos" ToRole="Equipos" />
+        </EntityType>
+        <Association Name="FK_EquiposFavoritos_Equipos">
+          <End Type="dbTuCalcuModel.Equipos" Role="Equipos" Multiplicity="0..1" />
+          <End Type="dbTuCalcuModel.EquiposFavoritos" Role="EquiposFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Equipos">
+              <PropertyRef Name="CodEquipo" />
+            </Principal>
+            <Dependent Role="EquiposFavoritos">
+              <PropertyRef Name="CodEquipo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="TorneosFavoritos">
+          <Key>
+            <PropertyRef Name="CodTorneoFavorito" />
+          </Key>
+          <Property Name="CodTorneoFavorito" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodUsuario" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CodTorneo" Type="Int32" />
+          <NavigationProperty Name="Torneos" Relationship="dbTuCalcuModel.FK_TorneosFavoritos_Torneos" FromRole="TorneosFavoritos" ToRole="Torneos" />
+        </EntityType>
+        <Association Name="FK_TorneosFavoritos_Torneos">
+          <End Type="dbTuCalcuModel.Torneos" Role="Torneos" Multiplicity="0..1" />
+          <End Type="dbTuCalcuModel.TorneosFavoritos" Role="TorneosFavoritos" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Torneos">
+              <PropertyRef Name="CodTorneo" />
+            </Principal>
+            <Dependent Role="TorneosFavoritos">
+              <PropertyRef Name="CodTorneo" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -814,17 +770,9 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
           <EntitySetMapping Name="Equipos">
             <EntityTypeMapping TypeName="dbTuCalcuModel.Equipos">
               <MappingFragment StoreEntitySet="Equipos">
+                <ScalarProperty Name="Flag" ColumnName="Flag" />
                 <ScalarProperty Name="CodEquipo" ColumnName="CodEquipo" />
                 <ScalarProperty Name="DesEquipo" ColumnName="DesEquipo" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="EquiposFavoritos">
-            <EntityTypeMapping TypeName="dbTuCalcuModel.EquiposFavoritos">
-              <MappingFragment StoreEntitySet="EquiposFavoritos">
-                <ScalarProperty Name="CodEquipoFavorito" ColumnName="CodEquipoFavorito" />
-                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
-                <ScalarProperty Name="CodEquipo" ColumnName="CodEquipo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -903,15 +851,6 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
                 <ScalarProperty Name="DesTorneo" ColumnName="DesTorneo" />
                 <ScalarProperty Name="NombreCorto" ColumnName="NombreCorto" />
                 <ScalarProperty Name="Flag" ColumnName="Flag" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TorneosFavoritos">
-            <EntityTypeMapping TypeName="dbTuCalcuModel.TorneosFavoritos">
-              <MappingFragment StoreEntitySet="TorneosFavoritos">
-                <ScalarProperty Name="CodTorneoFavorito" ColumnName="CodTorneoFavorito" />
-                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
-                <ScalarProperty Name="CodTorneo" ColumnName="CodTorneo" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -1002,6 +941,35 @@ advertencia 6002: La tabla o vista 'dbTuCalcu.dbo.__MigrationHistory' no tiene d
               <ScalarProperty Name="Id" ColumnName="RoleId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="Comentarios">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.Comentarios">
+              <MappingFragment StoreEntitySet="Comentarios">
+                <ScalarProperty Name="FechaCreacion" ColumnName="FechaCreacion" />
+                <ScalarProperty Name="Puntaje" ColumnName="Puntaje" />
+                <ScalarProperty Name="DesComentario" ColumnName="DesComentario" />
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="IdComentario" ColumnName="IdComentario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EquiposFavoritos">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.EquiposFavoritos">
+              <MappingFragment StoreEntitySet="EquiposFavoritos">
+                <ScalarProperty Name="CodEquipo" ColumnName="CodEquipo" />
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="CodEquipoFavorito" ColumnName="CodEquipoFavorito" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TorneosFavoritos">
+            <EntityTypeMapping TypeName="dbTuCalcuModel.TorneosFavoritos">
+              <MappingFragment StoreEntitySet="TorneosFavoritos">
+                <ScalarProperty Name="CodTorneo" ColumnName="CodTorneo" />
+                <ScalarProperty Name="CodUsuario" ColumnName="CodUsuario" />
+                <ScalarProperty Name="CodTorneoFavorito" ColumnName="CodTorneoFavorito" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

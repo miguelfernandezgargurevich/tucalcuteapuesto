@@ -15,10 +15,9 @@ namespace TuCalcuTeApuesto
     public partial class TorneosFavoritos
     {
         public int CodTorneoFavorito { get; set; }
-        public Nullable<int> CodUsuario { get; set; }
+        public string CodUsuario { get; set; }
         public Nullable<int> CodTorneo { get; set; }
     
         public virtual Torneos Torneos { get; set; }
-        public virtual Usuarios Usuarios { get; set; }
     }
 }

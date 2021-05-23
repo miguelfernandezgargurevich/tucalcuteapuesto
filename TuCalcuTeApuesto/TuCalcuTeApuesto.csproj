@@ -187,12 +187,21 @@
     <Compile Include="AspNetUsers.cs">
       <DependentUpon>ModelTuCalcu.tt</DependentUpon>
     </Compile>
+    <Compile Include="Comentarios.cs">
+      <DependentUpon>ModelTuCalcu.tt</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="C__MigrationHistory.cs">
       <DependentUpon>ModelTuCalcu.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataAccess\ComentarioDA.cs" />
+    <Compile Include="DataAccess\UsuariosDA.cs" />
+    <Compile Include="DataAccess\TorneosDA.cs" />
+    <Compile Include="DataAccess\EquiposDA.cs" />
+    <Compile Include="DataAccess\TorneosFavDA.cs" />
+    <Compile Include="DataAccess\EquiposFavDA.cs" />
     <Compile Include="Equipos.cs">
       <DependentUpon>ModelTuCalcu.tt</DependentUpon>
     </Compile>
@@ -205,6 +214,9 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\CabeceraModel.cs" />
     <Compile Include="Models\ComentarioModel.cs" />
+    <Compile Include="Models\UsuariosModel.cs" />
+    <Compile Include="Models\TorneosFavModel.cs" />
+    <Compile Include="Models\EquiposModel.cs" />
     <Compile Include="Models\ErrorViewModel.cs" />
     <Compile Include="Models\FileModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -212,6 +224,7 @@
     <Compile Include="Models\MailModel.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ModeloModel.cs" />
+    <Compile Include="Models\EquiposFavModel.cs" />
     <Compile Include="Models\TorneoModel.cs" />
     <Compile Include="ModelTuCalcu.Context.cs">
       <AutoGen>True</AutoGen>
@@ -591,7 +604,8 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\_PartialModalCalendar.cshtml" />
     <Content Include="Views\Home\_PartialModalCabeceras.cshtml" />
-    <Content Include="Views\Home\_PartialModalTorneos.cshtml" />
+    <Content Include="Views\Home\_PartialModalTorneosHoy.cshtml" />
+    <Content Include="Views\Home\_PartialModalFavoritos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Files\Programa\SSIS\" />
