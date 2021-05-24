@@ -67,8 +67,11 @@
                             </div>
                             <div class="col-md-12 col-xs-12" style="padding-top:15px;">
                                 <div class="row">
-                                    <div class="col-md-12 col-xs-12 pull-left">
+                                    <div class="col-md-6 col-xs-6 pull-left">
                                         <input id="txtBuscarEquiposFav" type="text" class="form-control" placeholder="Buscar mas equipos" onkeyup="cargarEquiposFav()">
+                                    </div>
+                                    <div class="col-md-6 col-xs-6 pull-left">
+                                        <label id="msjEquiposPost" class="fa fa-check fa-lg" style="display:none; font-size:small; padding-top:10px;"></label>
                                     </div>
 
                                 </div>
@@ -174,10 +177,12 @@
                             </div>
                             <div class="col-md-12 col-xs-12" style="padding-top:15px;">
                                 <div class="row">
-                                    <div class="col-md-12 col-xs-12 pull-left">
+                                    <div class="col-md-6 col-xs-6 pull-left">
                                         <input id="txtBuscarTorneosFav" type="text" class="form-control" placeholder="Buscar mas Torneos" onkeyup="cargarTorneoFav()">
                                     </div>
-
+                                    <div class="col-md-6 col-xs-6 pull-left">
+                                        <label id="msjTorneosPost" class="fa fa-check fa-lg" style="display:none; font-size:x-small; font-size:small; padding-top:10px;"></label>
+                                    </div>
                                 </div>
                                 <div id="panelBuscarTorneos" class="row" style="margin-top:15px;">
                                     <div class="col-md-12">
@@ -352,124 +357,132 @@
 
 }
 
-function addEquipos(nomEquipo, codEquipo, imagen) {
-    var valValCuota = true; //validaValorCuota(CUOTA);
-    if (valValCuota == false) return false;
+    function addEquipos(nomEquipo, codEquipo, imagen) {
+        var valValCuota = true; //validaValorCuota(CUOTA);
+        if (valValCuota == false) return false;
 
-    var valRep = true; //valRepetidos(JUGADA, COD, CUOTA);
-    if (valRep == false) return false;
+        var valRep = true; //valRepetidos(JUGADA, COD, CUOTA);
+        if (valRep == false) return false;
 
-    var nuevoObj = [];
-    nuevoObj.push({
-        Text: nomEquipo,
-        Value: codEquipo,
-        Imagen: imagen
-    });
+        var nuevoObj = [];
+        nuevoObj.push({
+            Text: nomEquipo,
+            Value: codEquipo,
+            Imagen: imagen
+        });
 
 
-    var contendor = $("#tbodyEquipos").html();
-    var nuevaFila = '<tr id=trEquiposID_' + nuevoObj[0].Value + '>';
-    nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style='display: none'>" + nuevoObj[0].Imagen + "</span>" + '</td>';
-    nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
-    nuevaFila += '<td style="width:10%;"><a href="javascript:addEquiposFav(' + nuevoObj[0].Value + ');" class="fa fa-plus fa-lg hand" title="Agregar" bs-tooltip></a></td>';
-    nuevaFila += '</tr>';
-    $("#tbodyEquipos").html(contendor + nuevaFila);
+        var contendor = $("#tbodyEquipos").html();
+        var nuevaFila = '<tr id=trEquiposID_' + nuevoObj[0].Value + '>';
+        nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style='display: none'>" + nuevoObj[0].Imagen + "</span>" + '</td>';
+        nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
+        nuevaFila += '<td style="width:10%;"><a href="javascript:addEquiposFav(' + nuevoObj[0].Value + ');" class="fa fa-plus fa-lg hand" title="Agregar" bs-tooltip></a></td>';
+        nuevaFila += '</tr>';
+        $("#tbodyEquipos").html(contendor + nuevaFila);
 
-    calcTotalEquipoFav();
+        calcTotalEquipoFav();
 
-}
+    }
 
-function delEquipoFav(cod) {
-    var id = 'trEquiposFavID_' + cod;
-    var tr = document.getElementById(id);
-    var table = tr.parentNode;
+    function delEquipoFav(cod) {
+        var id = 'trEquiposFavID_' + cod;
+        var tr = document.getElementById(id);
+        var table = tr.parentNode;
 
-    //antes de quitar de fav debe agregar a la lista de equipos
-    var td = tr.getElementsByTagName("td");
-    var nomEquipo = td[1].innerHTML;
-    var imagen = td[0].getElementsByTagName("span")[0].innerHTML;
+        //antes de quitar de fav debe agregar a la lista de equipos
+        var td = tr.getElementsByTagName("td");
+        var nomEquipo = td[1].innerHTML;
+        var imagen = td[0].getElementsByTagName("span")[0].innerHTML;
 
-    addEquipos(nomEquipo, cod, imagen);
-    //////
+        addEquipos(nomEquipo, cod, imagen);
+        //////
 
-    table.removeChild(tr);
+        table.removeChild(tr);
 
-    calcTotalEquipoFav();
+        calcTotalEquipoFav();
 
-    cargarTorneoFav();
+        cargarTorneoFav();
 
-    eliminarEquipoFavDb(cod);
+        eliminarEquipoFavDb(cod, nomEquipo);
 
-}
+    }
 
-function delEquipo(cod) {
-    var id = 'trEquiposID_' + cod;
-    var tr = document.getElementById(id);
-    var table = tr.parentNode;
-    table.removeChild(tr);
+    function delEquipo(cod) {
+        var id = 'trEquiposID_' + cod;
+        var tr = document.getElementById(id);
+        var table = tr.parentNode;
+        table.removeChild(tr);
 
-    calcTotalEquipoFav();
+        calcTotalEquipoFav();
 
-    //if (table.rows.length == 0)
-    //    $('#collapseThree').collapse('hide');
-}
+        //if (table.rows.length == 0)
+        //    $('#collapseThree').collapse('hide');
+    }
 
-function calcTotalEquipoFav() {
-    const mylistaEquiposFav = document.getElementById('mylistaEquiposFav');
-    $("#lblTotalFav").html(mylistaEquiposFav.rows.length);
-}
+    function calcTotalEquipoFav() {
+        const mylistaEquiposFav = document.getElementById('mylistaEquiposFav');
+        $("#lblTotalFav").html(mylistaEquiposFav.rows.length);
+    }
 
-function grabarEquipoFavDb(cod, desc) {
-    var dataObject = JSON.stringify({
-        'Text': desc,
-        'Value': cod,
-    });
+    function grabarEquipoFavDb(cod, desc) {
+        var msj = "";
+        var dataObject = JSON.stringify({
+            'Text': desc,
+            'Value': cod,
+        });
 
-    $.ajax({
-        url: '/Home/GrabarEquipoFav/',
-        data: dataObject,
-        contentType: 'application/json',
-        type: 'POST',
-        success: function (data) {
-            if (data == "true") {
-                $("#txtBuscarEquiposFav").val("");
-                //var myurl = '/Home/Index/';
-                //window.location.href = myurl;
+        $.ajax({
+            url: '/Home/GrabarEquipoFav/',
+            data: dataObject,
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (data) {
+                if (data == "true") {
+                    msj = desc + ' agregado con exito';
+                }
+                else {
+                    msj = 'Hubo un error agregando el equipo ' + desc;
+                
+                }
+                document.getElementById('msjEquiposPost').style.display = "block";
+                document.getElementById('msjEquiposPost').innerHTML = msj;
+
+                setTimeout("mostrarMensajePost('" + msj + "','msjEquiposPost')", 3000);
             }
-            else {
-                alert("Result: " + data);
+        });
+
+    }
+
+    function eliminarEquipoFavDb(cod, desc) {
+        var msj = "";
+        var dataObject = JSON.stringify({
+            'Text': desc,
+            'Value': cod,
+        });
+
+        $.ajax({
+            url: '/Home/EliminarEquipoFav/',
+            data: dataObject,
+            contentType: 'application/json',
+            type: 'POST',
+            success: function (data) {
+                if (data == "true") {
+                    msj = desc + ' eliminado con exito';
+                
+                }
+                else {
+                    msj = 'Hubo un error eliminando el equipo ' + desc;
+                
+                }
+                document.getElementById('msjEquiposPost').style.display = "block";
+                document.getElementById('msjEquiposPost').innerHTML = msj;
+                //alert("Result: " + data);
+
+                setTimeout("mostrarMensajePost('" + msj + "','msjEquiposPost')", 3000);
             }
-        }
-    });
+        });
 
-}
-
-function eliminarEquipoFavDb(cod, desc) {
-    var dataObject = JSON.stringify({
-        'Text': desc,
-        'Value': cod,
-    });
-
-    $.ajax({
-        url: '/Home/EliminarEquipoFav/',
-        data: dataObject,
-        contentType: 'application/json',
-        type: 'POST',
-        success: function (data) {
-            if (data == "true") {
-                //$("#txtMensaje").val("");
-                //alert("Su comentario se envió con éxito.");
-
-                //var myurl = '/Home/Index/';
-                //window.location.href = myurl;
-            }
-            else {
-                alert("Result: " + data);
-            }
-        }
-    });
-
-}
+    }
 
 </script>
 
@@ -577,7 +590,7 @@ function eliminarEquipoFavDb(cod, desc) {
         });
 
         var contendor = $("#tbodyTorneosFav").html();
-        var nuevaFila = '<tr id=trTorenosFavID_' + nuevoObj[0].Value + '>';
+        var nuevaFila = '<tr id=trTorneosFavID_' + nuevoObj[0].Value + '>';
         nuevaFila += '<td style="width:10%; background: url(\'/Imagenes/flags/' + nuevoObj[0].Imagen + '\') no-repeat center left; padding-left: 20px;">' + "<span style=display:none;>" + nuevoObj[0].Imagen+"</span>" + '</td>';
         nuevaFila += '<td style="width:70%; text-align:left; padding: 4px; font-size:x-small;">' + nuevoObj[0].Text + '</td>';
         nuevaFila += '<td style="width:10%;"><a href="javascript:delTorneoFav(' + nuevoObj[0].Value + ');" class="fa fa-times fa-lg hand" title="Eliminar" bs-tooltip></a></td>';
@@ -642,7 +655,7 @@ function eliminarEquipoFavDb(cod, desc) {
 
         cargarTorneoFav();
 
-        eliminarTorneoFavDb(cod);
+        eliminarTorneoFavDb(cod, nomTorneo);
 
     }
 
@@ -663,7 +676,13 @@ function eliminarEquipoFavDb(cod, desc) {
         $("#lblTotalFav").html(mylistaTorneosFav.rows.length);
     }
 
+    function mostrarMensajePost(msj, idObj) {
+        document.getElementById(idObj).innerHTML = msj;
+        document.getElementById(idObj).style.display = "none";
+    }
+
     function grabarTorneoFavDb(cod, desc) {
+        var msj = "";
         var dataObject = JSON.stringify({
             'Text': desc,
             'Value': cod,
@@ -676,20 +695,25 @@ function eliminarEquipoFavDb(cod, desc) {
             type: 'POST',
             success: function (data) {
                 if (data == "true") {
-                    $("#txtBuscarTorneosFav").val("");
-                    //var myurl = '/Home/Index/';
-                    //window.location.href = myurl;
+                    msj = desc + ' agregado con exito';
+                    evalChecksTorneosFav();
                 }
                 else {
-                    alert("Result: " + data);
+                    msj = 'Hubo un problema agregado el torneo ' + desc;
+                   
                 }
+                document.getElementById('msjTorneosPost').style.display = "block";
+                document.getElementById('msjTorneosPost').innerHTML = msj;
+                //alert("Result: " + data);
+
+                setTimeout("mostrarMensajePost('" + msj + "','msjTorneosPost')", 3000);
             }
         });
 
     }
 
     function eliminarTorneoFavDb(cod, desc) {
-        debugger;
+        var msj = "";
         var dataObject = JSON.stringify({
             'Text': desc,
             'Value': cod,
@@ -702,15 +726,18 @@ function eliminarEquipoFavDb(cod, desc) {
             type: 'POST',
             success: function (data) {
                 if (data == "true") {
-                    //$("#txtMensaje").val("");
-                    //alert("Su comentario se envió con éxito.");
-
-                    //var myurl = '/Home/Index/';
-                    //window.location.href = myurl;
+                    msj = desc + ' eliminado con exito';
+                    evalChecksTorneosFav();
                 }
                 else {
-                    alert("Result: " + data);
+                    msj = 'Hubo un error eliminando el exito' + desc;
+                    
+                    //alert("Result: " + data);
                 }
+                document.getElementById('msjTorneosPost').style.display = "block";
+                document.getElementById('msjTorneosPost').innerHTML = msj;
+
+                setTimeout("mostrarMensajePost('" + msj + "','msjTorneosPost')", 3000);
             }
         });
 

@@ -26,6 +26,7 @@ namespace TuCalcuTeApuesto.Controllers
             ListaModel listaFinal = CargaDataModelo(f);
 
             return View(listaFinal);
+
         }
 
         [HttpPost]
@@ -252,6 +253,17 @@ namespace TuCalcuTeApuesto.Controllers
             var logErrorFinal = string.Format("{0} | {1}", comentario, error.StackTrace);
             //log.ErrorFormat("{0} | {1}", comentario, error.StackTrace);
 
+            //PARA LOG ERROR
+            var fileUnicoNameSSIS = String.Concat("ERROR", ".txt");
+            var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
+
+            using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(logErrorFinal);
+                fs.Write(bytes, 0, bytes.Length);
+                fs.Close();
+            }
+
             ViewBag.ErrorMessage = logErrorFinal;
             
             return string.Format(logErrorFinal);
@@ -401,13 +413,26 @@ namespace TuCalcuTeApuesto.Controllers
                 //elimina los favoritos de la lista final
                 foreach (var item in listaTorneosFav)
                 {
-                    var codEquipoFav = Convert.ToInt32(item.Value);
+                    int codEquipoFav = Convert.ToInt32(item.Value);
+                    var nombreCorto = item.NombreCorto.Trim(); ;
                     TorneoModel resultFind = listaTorneos.Where(x => x.Value == codEquipoFav).FirstOrDefault();
                     if (resultFind != null)
                     {
                         listaTorneos.Remove(resultFind);
                     }
+
+                    //solo marca los torneos fav de la lista de torneos de hoy
+                    foreach (var itemHoy in listaTorneosHoy)
+                    {
+                        if (nombreCorto == itemHoy.Text)
+                        {
+                            itemHoy.IsChecked = false;
+                            itemHoy.IsSelected = "";
+                        }
+                            
+                    }
                 }
+                
             }
 
             //Final
