@@ -233,7 +233,13 @@ namespace TuCalcuTeApuesto.Controllers
         #endregion
 
         #region "Metodos"
-
+        /// <summary>
+        /// CapturarError: llena el ViewBag.ErrorMessage y devuelve una cadena con la descripcion del error 
+        /// </summary>
+        /// <param name="error"></param>
+        /// <param name="controlador"></param>
+        /// <param name="accion"></param>
+        /// <returns></returns>
         public string CapturarError(Exception error, string controlador = "", string accion = "")
         {
             var msg = error.Message;
@@ -294,7 +300,7 @@ namespace TuCalcuTeApuesto.Controllers
                 //ultima modificacion es menor a hoy actualiza           
                 var pathFile = System.IO.Path.Combine(Server.MapPath("~/"), "Files", fileModel.Name);
                 var strLastModified = Convert.ToDateTime(System.IO.File.GetLastWriteTime(pathFile).ToShortDateString());
-                var fechaCreacionFile = Convert.ToDateTime(fileModel.CreationTime.ToShortDateString());
+                //var fechaCreacionFile = Convert.ToDateTime(fileModel.CreationTime.ToShortDateString());
                 var fechaHoyCadena = Convert.ToDateTime(fechaHoy.ToShortDateString());
                 var diasDiff = (fechaHoyCadena - strLastModified).Days;
 
@@ -631,6 +637,9 @@ namespace TuCalcuTeApuesto.Controllers
 
         private List<TorneoModel> CargarTorneos(DataTable dt)
         {
+            TorneosDA _daTorneos = new TorneosDA();
+            List<TorneoModel> listaTorneosDB = _daTorneos.ListarTorneos();
+
             DataView view = new DataView(dt);
             DataTable dtTorneos = view.ToTable(true, "TORNEO");
 
@@ -645,7 +654,7 @@ namespace TuCalcuTeApuesto.Controllers
                 objTorneo.Text = item;
                 objTorneo.Value = i;
                 objTorneo.IsChecked = true;
-                objTorneo.Imagen = ObtenerUrlImagen(item);
+                objTorneo.Imagen = ObtenerUrlImagenDB(item, listaTorneosDB);
                 objTorneo.IsSelected = "selected";
                 listaTorneos.Add(objTorneo);
                 i++;
@@ -654,13 +663,25 @@ namespace TuCalcuTeApuesto.Controllers
             return listaTorneos;
         }
 
+        private string ObtenerUrlImagenDB(string torneo, List<TorneoModel> listaTorneosDB) {
+            string url = "";
+            var tab = "\t";
+            TorneoModel existeTorneo = listaTorneosDB.Where(x => x.NombreCorto.Contains(torneo)).FirstOrDefault();
+            if (existeTorneo != null) 
+                url = existeTorneo.Imagen.Replace(tab, "");
+            else
+                url = "europeanunion.png";
+
+            return url;
+        }
+
         private string ObtenerUrlImagen(string torneo)
         {
             string url = "";
-
+            
             if (torneo == "ARG" || torneo == "ARG2" || torneo == "ARGC")
                 url = "ar.png";
-            else if (torneo == "PER" || torneo == "PER2")
+            else if (torneo == "PER" || torneo == "PER2" || torneo == "PE2")
                 url = "pe.png";
             else if (torneo == "ESP" || torneo == "ESP2" || torneo == "ESP3")
                 url = "es.png";
@@ -1286,6 +1307,9 @@ namespace TuCalcuTeApuesto.Controllers
                 dt.Rows.Add(row);
             }
 
+            TorneosDA _daTorneos = new TorneosDA();
+            List<TorneoModel> listaTorneosDB = _daTorneos.ListarTorneos();
+
             for (int k = 0; k <= dt.Rows.Count - 1; k++)
             {
                 string torneo = dt.Rows[k]["TORNEO"].ToString();
@@ -1295,7 +1319,7 @@ namespace TuCalcuTeApuesto.Controllers
                 dt.Rows[k]["LOCAL"] = local;
                 dt.Rows[k]["VISITA"] = visita;
 
-                string imagen = ObtenerUrlImagen(torneo);
+                string imagen = ObtenerUrlImagenDB(torneo, listaTorneosDB);
                 dt.Rows[k]["FLAG"] = imagen;
 
             }
@@ -1387,14 +1411,17 @@ namespace TuCalcuTeApuesto.Controllers
                             }
                             else
                             {
-                                if (line.Contains("V-VAREN"))
-                                    line = line.Replace("V-VAREN", "V VAREN");
+                                if (line.Contains("V-"))
+                                    line = line.Replace("V-", "V ");
 
-                                if (line.Contains("AL-FUJIRAH"))
-                                    line = line.Replace("AL-FUJIRAH", "AL FUJIRAH");
+                                if (line.Contains("AL-"))
+                                    line = line.Replace("AL-", "AL ");
 
                                 if (line.Contains("VILLEFRANCHE-BEAUJOLAIS"))
                                     line = line.Replace("VILLEFRANCHE-BEAUJOLAIS", "VILLEFRANCHE BEAUJOLAIS");
+
+                                if (line.Contains("'"))
+                                    line = line.Replace("'", "");
 
                                 fileClean.WriteLine(line);
 
@@ -1439,7 +1466,7 @@ namespace TuCalcuTeApuesto.Controllers
                     }
 
                     //PARA SSIS
-                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS-", ".txt");
+                    var fileUnicoNameSSIS = String.Concat("TA-ED-Regular-SSIS", ".txt");
                     var fileUnicoPathSSIS = System.IO.Path.Combine(Server.MapPath("~/"), "Files", "Programa", "SSIS", fileUnicoNameSSIS);
 
                     using (FileStream fs = new FileStream(fileUnicoPathSSIS, FileMode.Create))
@@ -1912,6 +1939,9 @@ namespace TuCalcuTeApuesto.Controllers
                 dt.Rows.Add(row);
             }
 
+            TorneosDA _daTorneos = new TorneosDA();
+            List<TorneoModel> listaTorneosDB = _daTorneos.ListarTorneos();
+
             for (int k = 0; k <= dt.Rows.Count - 1; k++)
             {
                 string torneo = dt.Rows[k]["TORNEO"].ToString();
@@ -1924,7 +1954,7 @@ namespace TuCalcuTeApuesto.Controllers
                 dt.Rows[k]["VISITA"] = visita;
                 dt.Rows[k]["NOMBRE"] = nombreProg;
                 dt.Rows[k]["FECHA"] = fechaProg;
-                dt.Rows[k]["FLAG"] = ObtenerUrlImagen(torneo);
+                dt.Rows[k]["FLAG"] = ObtenerUrlImagenDB(torneo, listaTorneosDB);
 
             }
 

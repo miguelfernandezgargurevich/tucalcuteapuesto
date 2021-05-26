@@ -20,7 +20,7 @@
 
     .terms {
         display: flex;
-        padding-top: 2px;
+        padding-top: 10px;
     }
 
         .terms > p {
@@ -383,7 +383,7 @@
                                     <div class="box-body table-responsive no-padding" style="z-index:-999;">
                                         <div>
                                             <table id="tableHeader" class="table myTableHead">
-                                                <caption class="mycaptionthead"><span></span><span style="font-size:x-small"></span></caption>
+                                                <caption style="display:none;" class="mycaptionthead"><span></span><span style="font-size:x-small"></span></caption>
                                                 <thead id="tbodyHeader" class="mythead">
                                                     <tr style="height: 30px;">
                                                         <th class="col0" style="width:20px; padding: 4px; padding-bottom:7px;"><span style="font-size:xx-small;">TORNEO</span></th>
@@ -436,7 +436,7 @@
 
                                             </table>
                                         </div>
-                                        <div style="height:250px; overflow:visible; overflow-y: scroll;" >
+                                        <div id="tblmyDataTableContenedor" style="height:250px; overflow:visible; overflow-y: scroll;" >
                                             <table id="tblmyDataTable" class="table myTable">
                                                 <tbody id="tbody">
                                                     @if (Model != null)
@@ -514,18 +514,23 @@
                             <div class="form-group">
                                 <div class="col-md-6 col-xs-12 nopadding">
                                     <div>
-                                        <div class="col-md-12 col-xs-12" style="border:2px solid #f60; padding:10px; border-radius: 10px;">
+                                        <div class="col-md-12 col-xs-12" style="border:2px solid #f60; padding:0px; border-radius: 10px;">
                                             <div class="col-md-6 col-xs-6">
                                                 <div class="terms pull-left">
                                                     <span class="fa fa-minus-circle fa-2x hollow nopadding mysearchSpin btn" aria-hidden="true" data-quantity="minus" data-field="quantity"></span>
-                                                    <input id="lblApuesta" style="width:70px;" class="input-group-field form-control" onkeyup="calcGananciaTotal();" onchange="calcGananciaTotal();" type="number" name="quantity" value="2" min="0" max="100" maxlength="5" control-id="ControlID-2">
+                                                    <input id="lblApuesta" style="width:100px;" class="input-group-field form-control" onkeyup="calcGananciaTotal();" onchange="calcGananciaTotal();" type="number" name="quantity" value="2" min="0" max="100" maxlength="5" control-id="ControlID-2">
                                                     <span class="fa fa-plus-circle fa-2x hollow nopadding mysearchSpin btn" aria-hidden="true" data-quantity="plus" data-field="quantity"></span>
                                                 </div>
                                             </div>
                                             <div class="col-md-6 col-xs-6" style="margin-top:5px;">
-                                                <div class="pull-right">
+
+                                                <div class="col-md-12 col-xs-12" style="text-align:right;">
+                                                    <label style="font-size:x-small">Cuota: </label>
+                                                    <label id="lblCuota" style="font-size:small;">0</label>
+                                                </div>
+                                                <div class="col-md-12 col-xs-12" style="text-align:right;">
                                                     <label style="font-size:x-small;" for="total">Total S/. </label>
-                                                    <label for="lblGanancia" id="lblGanancia" style="font-size:x-large;">0.00</label>
+                                                    <label for="lblGanancia" id="lblGanancia" style="font-size:small;">0.00</label>
                                                     <span id="lblTotalfoot" class="hide"></span>
                                                 </div>
                                             </div>
@@ -536,12 +541,12 @@
                                                 @if (Model != null)
                                                 {
                                                     <table id="tableHeaderJugada" class="table myTableHeadJugada">
-                                                        <caption class="mycaptionJugada"><span style="font-size:x-small">Cuota: </span><span id="lblCuota">0</span></caption>
+                                                        <caption style="display:none;" class="mycaptionJugada"></caption>
                                                         <thead class="mytheadJugada">
                                                             <tr>
                                                                 <th style="width:50px;"><span style="font-size:xx-small">TOR</span></th>
                                                                 <th style="width:50px;"><span style="font-size:xx-small">HORA</span></th>
-                                                                <th style="width:50px;"><span style="font-size:xx-small">COD</span></th>
+                                                                @*<th style="width:50px;"><span style="font-size:xx-small">COD</span></th>*@
                                                                 <th style="width:150px;"><span>EQUIPOS</span></th>
                                                                 <th style="width:50px;"><span>JUG</span></th>
                                                                 <th style="width:50px;"><span>CUOTA</span></th>
@@ -549,7 +554,7 @@
                                                             </tr>
                                                         </thead>
                                                     </table>
-                                                    <div style="height:180px; overflow:auto; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
+                                                    <div id="tblJugadaContenedor" style="height:180px; overflow:auto; border-bottom:inset; border-bottom-color: #f60; border-inline: none; border-top: none;">
                                                         <table id="tblJugada" class="table">
                                                             <tbody id="tbodyJugada"></tbody>
                                                             <tfoot id="tfootJugada"></tfoot>
@@ -1013,7 +1018,7 @@
         var nuevaFila = '<tr style="width:50px;" id="trJugada_' + nuevoObj[0].COD + '">';
         nuevaFila += '<td style="width:50px; background: url(\'/Imagenes/flags/' + nuevoObj[0].IMAGEN + '\') no-repeat center left; padding-left: 20px;" class="mytd2">' + nuevoObj[0].TORNEO + '</td>';
         nuevaFila += '<td style="width:50px;" class="mytd2">' + nuevoObj[0].HORA + '</td>';
-        nuevaFila += '<td style="width:50px;" class="mytd2">' + nuevoObj[0].COD + '</td>';
+        //nuevaFila += '<td style="width:50px;" class="mytd2">' + nuevoObj[0].COD + '</td>';
         nuevaFila += '<td style="width:150px;">' + nuevoObj[0].EQUIPOS + '</td>';
         nuevaFila += '<td style="width:50px;" class="mytd2" id="tdJugada_' + nuevoObj[0].COD + '">' + nuevoObj[0].JUGADA + '</td>';
         nuevaFila += '<td style="width:50px;" class="mytd2" id="tdCuota_' + nuevoObj[0].COD + '">' + nuevoObj[0].CUOTA + '</td>';
@@ -1117,8 +1122,8 @@
         var sumtotal_col1 = 0;
         var myarrCuotas = [];
         $('#tblJugada tbody').find('tr').each(function (i, el) {
-            sumtotal_col1 += parseFloat($(this).find('td').eq(5).text());
-            myarrCuotas[i] = parseFloat($(this).find('td').eq(5).text());
+            sumtotal_col1 += parseFloat($(this).find('td').eq(4).text());
+            myarrCuotas[i] = parseFloat($(this).find('td').eq(4).text());
         });
 
         //var rows = document.getElementById("tblJugada").rows.length;
@@ -1131,7 +1136,7 @@
             //var contendorfoot = $("#tfootJugada").html();
             var nuevaFilafoot = '<tr style="width:50px;" id="tfootJugada">';
             nuevaFilafoot += '<td style="width:50px;" class="mytd2"></td>';
-            nuevaFilafoot += '<td style="width:50px;" class="mytd2"></td>';
+            //nuevaFilafoot += '<td style="width:50px;" class="mytd2"></td>';
             nuevaFilafoot += '<td style="width:50px;" class="mytd2"></td>';
             nuevaFilafoot += '<td style="width:150px;"></td>';
             nuevaFilafoot += '<td style="width:50px;" class="mytd2"></td>';

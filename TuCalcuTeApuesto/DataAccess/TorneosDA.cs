@@ -13,23 +13,60 @@ namespace TuCalcuTeApuesto.DataAccess
     {
         dbTuCalcuEntities _db;
 
+        public List<TorneoModel> ListarTorneos()
+        {
+            //AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
+            //List<Torneos> TorneosFav = _db.Torneos.ToList();
+            _db = new dbTuCalcuEntities();
+            IQueryable<TorneoModel> queryResult = from x in _db.Torneos
+                                                   select new TorneoModel
+                                                   {
+                                                       NombreCorto = x.NombreCorto,
+                                                       Text = x.DesTorneo,
+                                                       Value = x.CodTorneo,
+                                                       Imagen = x.Flag
+                                                   };
+
+            return queryResult.ToList();
+        }
+
         public string getExceptionEntityValidation(DbEntityValidationException error, string controlador = "", string accion = "")
         {
             string msg = string.Empty;
+            //foreach (var eve in error.EntityValidationErrors)
+            //{
+            //    msg = msg + "Entity of type \"{0}\" in state \"{1}\" has the following validation errors:" +
+            //        eve.Entry.Entity.GetType().Name + eve.Entry.State;
+            //    foreach (var ve in eve.ValidationErrors)
+            //    {
+            //        msg = msg + "- Property: \"{0}\", Error: \"{1}\"" +
+            //            ve.PropertyName + " " + ve.ErrorMessage;
+            //    }
+            //}
+
+            //var comentario = $@"Se ejecutó la accion: [{controlador}/{accion}] - MensajeError: {msg}";
+            //var logErrorFinal = string.Format("{0} | {1}", comentario, error.StackTrace);
+            ////log.ErrorFormat("{0} | {1}", comentario, error.StackTrace);
+
+
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine();
+            sb.AppendLine();
             foreach (var eve in error.EntityValidationErrors)
             {
-                msg = msg + "Entity of type \"{0}\" in state \"{1}\" has the following validation errors:" +
-                    eve.Entry.Entity.GetType().Name + eve.Entry.State;
+                sb.AppendLine(string.Format("- Entity of type \"{0}\" in state \"{1}\" has the following validation errors:",
+                    eve.Entry.Entity.GetType().FullName, eve.Entry.State));
                 foreach (var ve in eve.ValidationErrors)
                 {
-                    msg = msg + "- Property: \"{0}\", Error: \"{1}\"" +
-                        ve.PropertyName + " " + ve.ErrorMessage;
+                    sb.AppendLine(string.Format("-- Property: \"{0}\", Value: \"{1}\", Error: \"{2}\"",
+                        ve.PropertyName,
+                        eve.Entry.CurrentValues.GetValue<object>(ve.PropertyName),
+                        ve.ErrorMessage));
                 }
             }
-
-            var comentario = $@"Se ejecutó la accion: [{controlador}/{accion}] - MensajeError: {msg}";
-            var logErrorFinal = string.Format("{0} | {1}", comentario, error.StackTrace);
-            //log.ErrorFormat("{0} | {1}", comentario, error.StackTrace);
+            sb.AppendLine();
+            var logErrorFinal = sb.ToString();
 
             var logError = String.Concat("ERROR-", "TorneosDA", ".txt");
             var pathLog = System.IO.Path.Combine("~/", "Files", "Programa", "SSIS", logError);
@@ -62,7 +99,7 @@ namespace TuCalcuTeApuesto.DataAccess
             var logErrorFinal = string.Format("{0} | {1}", comentario, error.StackTrace);
             //log.ErrorFormat("{0} | {1}", comentario, error.StackTrace);
 
-            var logError = String.Concat("ERROR-","TorneosDA", ".txt");
+            var logError = String.Concat("ERROR-", "TorneosDA", ".txt");
             var pathLog = System.IO.Path.Combine("~/", "Files", "Programa", "SSIS", logError);
 
             using (FileStream fs = new FileStream(pathLog, FileMode.Create))
@@ -74,23 +111,6 @@ namespace TuCalcuTeApuesto.DataAccess
 
 
             return string.Format(logErrorFinal);
-        }
-
-        public List<TorneoModel> ListarTorneos()
-        {
-            //AspNetUsers user = _db.AspNetUsers.Where(m => m.Email == User.Identity.Name).ToList().FirstOrDefault();
-            //List<Torneos> TorneosFav = _db.Torneos.ToList();
-            _db = new dbTuCalcuEntities();
-            IQueryable<TorneoModel> queryResult = from x in _db.Torneos
-                                                   select new TorneoModel
-                                                   {
-                                                       NombreCorto = x.NombreCorto,
-                                                       Text = x.DesTorneo,
-                                                       Value = x.CodTorneo,
-                                                       Imagen = x.Flag
-                                                   };
-
-            return queryResult.ToList();
         }
 
     }
